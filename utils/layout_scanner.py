@@ -1,3 +1,7 @@
+"""
+Scanning existing presentation file and parse its layout structure.
+This is designed to replicate the layout and provide quick "Data Switch" for the regular reporting.
+"""
 from lxml import etree
 
 
