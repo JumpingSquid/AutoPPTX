@@ -2,7 +2,7 @@ import pandas as pd
 from pptx import Presentation
 from pptx.util import Inches
 
-from utils import pptx_layout, data2comment, data2table
+from utils import pptx_layout, data2table
 from preprocessing import chart_data_preprocessor
 
 
@@ -147,11 +147,6 @@ class PptxConstructor:
 
             # call the prslayoutmanager to arrange the position of the elements in a slide
             prslayoutmanager = pptx_layout.PrsLayoutManager(self.presentation, slide_config)
-
-            # create comment if needed
-            if slide_config["comment"] is not None:
-                comment_creator = data2comment.CommentCreator(self.data, slide_config["comment"])
-                self.presentation = prslayoutmanager.add_comment_on_slide(comment_creator)
 
             # create title if needed
             if slide_config["title"] is not None:
