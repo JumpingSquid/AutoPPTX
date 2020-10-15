@@ -2,8 +2,8 @@ import pandas as pd
 from pptx import Presentation
 from pptx.util import Inches
 
-from autoppt_util import pptx_layout, data2comment, data2table
-from data_preprocessing import chart_data_preprocessor
+from utils import pptx_layout, data2comment, data2table
+from preprocessing import chart_data_preprocessor
 
 
 class PptxConstructor:

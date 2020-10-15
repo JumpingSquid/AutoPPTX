@@ -2,7 +2,7 @@
 
 def order_set():
     sat_item = ['非常不满意', "非常差", "很不满意", "很差", "差",
-                 '不满意', '有點不满意', "普通", '還可以', '满意', "很满意", '非常满意']
+                '不满意', '有點不满意', "普通", '還可以', '满意', "很满意", '非常满意']
     sat_item.reverse()
     orderset = {
                 "satisfaction": ['非常不滿意', "很不滿意", '不滿意', '有點不滿意',
@@ -45,15 +45,6 @@ def column_name_map():
     }
     return column_name_translate
 
-
-def comment_type_language(lang, ctype):
-    comment_type_dict = {"zh": {}, "en": {}}
-    comment_type_dict["zh"]["%max"] = "以{}來說，最多人選擇的是{}，佔整體的{:.0%}。"
-    comment_type_dict["zh"]["%min"] = "以{}來說，最少人選擇的是{}，佔整體的{:.0%}。"
-    comment_type_dict["zh"]["mv%max"] = "以{}來說，最多人認為{}的是{}，佔整體的{:.0%}。"
-    comment_type_dict["zh"]["mv%min"] = "以{}來說，最少人認為{}的是{}，佔整體的{:.0%}。"
-    comment_type_dict["zh"]["nss_max"] = "以淨滿意度來說，最高分的是{}，分數為{}分。"
-    return comment_type_dict[lang][ctype]
 
 
 def textbox(key):
