@@ -1,8 +1,15 @@
-# This module is used to create chart from a data
-# The requirement of the data is to have only two columns
-# The first column should be the categorical
-# The second column can be numerical or categorical variable
-# Two output format: 1. (data, slide) -> slide, 2. data -> presentation
+"""
+Data2chart ver 1.1
+
+Description:
+Data2Chart creates chart(s) on presentation object(prs).
+prs can be taken as input or o/w initialized at the beginning.
+ver 1.1 allows for direct output of prs file with chart, while it's still available
+  being called by pptx_construct
+For simplicity, Data2chart should not allow for complicated layout manipulation,
+that is, one slide for one chart rule should be follow.
+To create slide with multiple charts, one should use pptx_construct instead.
+"""
 
 from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
@@ -16,6 +23,7 @@ from pptx.util import Inches
 class ChartCreator:
 
     def __init__(self,
+                 prs=None,
                  origin=None,
                  size=None,
                  chart_category=None,
@@ -23,6 +31,11 @@ class ChartCreator:
                  chart_type="line",
                  chart_format=None
                  ):
+        if prs is None:
+            self.presentation = self.newprs()
+        else:
+            assert isinstance(Presentation, prs)
+            self.presentation = prs
 
         if chart_series is not None:
             self.chart_series = chart_series
@@ -214,7 +227,7 @@ class ChartCreator:
                                                colormap[colormap_index % len(colormap)][2])
                 colormap_index += 1
 
-    def newslide(self) -> Presentation():
+    def newprs(self) -> Presentation():
         prs = Presentation()
         # slide size: 16:9
         prs.slide_width = Inches(13.33)
