@@ -13,7 +13,7 @@ from pptx import Presentation
 from pptx.util import Inches
 
 
-class ChatCreator:
+class ChartCreator:
 
     def __init__(self,
                  origin=None,

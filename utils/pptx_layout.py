@@ -70,12 +70,12 @@ class PrsLayoutManager:
         # basic chart type: hist, stackbar, stackcolumn
         if chart_created_config["type"] in ["hist", "stackbar", "stackcolumn"]:
             print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
-            chartcreator = data2chart.ChatCreator(chart_category=self.dataprocessor.single_category_push()["category"],
-                                                  chart_series=self.dataprocessor.single_category_push()["series"],
-                                                  origin=self.chart_origin_anchor,
-                                                  size=self.chart_box_size,
-                                                  chart_type=chart_created_config["type"],
-                                                  chart_format=chart_created_config["format"])
+            chartcreator = data2chart.ChartCreator(chart_category=self.dataprocessor.single_category_push()["category"],
+                                                   chart_series=self.dataprocessor.single_category_push()["series"],
+                                                   origin=self.chart_origin_anchor,
+                                                   size=self.chart_box_size,
+                                                   chart_type=chart_created_config["type"],
+                                                   chart_format=chart_created_config["format"])
             chartcreator.chart_create_on_slide(slide)
             self.sample_size_legend(slide, self.dataprocessor.samplecount, left=self.chart_origin_anchor[0])
             if int(self.dataprocessor.totalsample) < sample_size_limit:
@@ -87,12 +87,12 @@ class PrsLayoutManager:
         # basic chart type: pie
         elif chart_created_config["type"] in ["pie", "p"]:
             print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
-            chartcreator = data2chart.ChatCreator(chart_category=self.dataprocessor.pie_push()["category"],
-                                                  chart_series=self.dataprocessor.pie_push()["series"],
-                                                  origin=self.chart_origin_anchor,
-                                                  size=self.chart_box_size,
-                                                  chart_type="pie",
-                                                  chart_format=chart_created_config["format"])
+            chartcreator = data2chart.ChartCreator(chart_category=self.dataprocessor.pie_push()["category"],
+                                                   chart_series=self.dataprocessor.pie_push()["series"],
+                                                   origin=self.chart_origin_anchor,
+                                                   size=self.chart_box_size,
+                                                   chart_type="pie",
+                                                   chart_format=chart_created_config["format"])
             chartcreator.chart_create_on_slide(slide)
             self.sample_size_legend(slide, self.dataprocessor.totalsample, left=self.chart_origin_anchor[0])
 
@@ -115,12 +115,12 @@ class PrsLayoutManager:
 
         elif chart_created_config["type"] in ["sep_bar", "sep_b"]:
             print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
-            chartcreator = data2chart.ChatCreator(chart_category=self.dataprocessor.sep_bar_push()["category"],
-                                                  chart_series=self.dataprocessor.sep_bar_push()["series"],
-                                                  origin=self.chart_origin_anchor,
-                                                  size=self.chart_box_size,
-                                                  chart_type="bar",
-                                                  chart_format=chart_created_config["format"])
+            chartcreator = data2chart.ChartCreator(chart_category=self.dataprocessor.sep_bar_push()["category"],
+                                                   chart_series=self.dataprocessor.sep_bar_push()["series"],
+                                                   origin=self.chart_origin_anchor,
+                                                   size=self.chart_box_size,
+                                                   chart_type="bar",
+                                                   chart_format=chart_created_config["format"])
             chartcreator.chart_create_on_slide(slide)
             self.sample_size_legend(slide, self.dataprocessor.totalsample, left=self.chart_origin_anchor[0])
 
@@ -143,12 +143,12 @@ class PrsLayoutManager:
 
         elif chart_created_config["type"] == ["line", "l"]:
             print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
-            chartcreator = data2chart.ChatCreator(chart_category=self.dataprocessor.line_push()["category"],
-                                                  chart_series=self.dataprocessor.line_push()["series"],
-                                                  origin=self.chart_origin_anchor,
-                                                  size=self.chart_box_size,
-                                                  chart_type="line",
-                                                  chart_format=chart_created_config["format"])
+            chartcreator = data2chart.ChartCreator(chart_category=self.dataprocessor.line_push()["category"],
+                                                   chart_series=self.dataprocessor.line_push()["series"],
+                                                   origin=self.chart_origin_anchor,
+                                                   size=self.chart_box_size,
+                                                   chart_type="line",
+                                                   chart_format=chart_created_config["format"])
             chartcreator.chart_create_on_slide(slide)
             self.sample_size_legend(slide, self.dataprocessor.samplecount, left=self.chart_origin_anchor[0])
             self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
@@ -162,12 +162,12 @@ class PrsLayoutManager:
                 chart_size_split_num += 1
             self.chart_box_size = [self.chart_box_size[0] / chart_size_split_num, self.chart_box_size[1] / 3.2]
             for chart_id in range(0, chart_num):
-                chartcreator = data2chart.ChatCreator(chart_category=self.dataprocessor.multi_category_push(chart_id)["category"],
-                                                      chart_series=self.dataprocessor.multi_category_push(chart_id)["series"],
-                                                      origin=self.chart_origin_anchor,
-                                                      size=self.chart_box_size,
-                                                      chart_type="bar",
-                                                      chart_format=chart_created_config["format"])
+                chartcreator = data2chart.ChartCreator(chart_category=self.dataprocessor.multi_category_push(chart_id)["category"],
+                                                       chart_series=self.dataprocessor.multi_category_push(chart_id)["series"],
+                                                       origin=self.chart_origin_anchor,
+                                                       size=self.chart_box_size,
+                                                       chart_type="bar",
+                                                       chart_format=chart_created_config["format"])
                 slide = chartcreator.chart_create_on_slide(slide)
                 if chart_id % 3 != 2:
                     self.chart_origin_anchor = [self.chart_origin_anchor[0],
@@ -181,12 +181,12 @@ class PrsLayoutManager:
                 self.chart_origin_anchor = [self.chart_origin_anchor[0], Inches(1.65)]
 
         elif chart_created_config["type"] in ["multiple_value_column_bar", "mv"]:
-            chartcreator = data2chart.ChatCreator(chart_category=self.dataprocessor.multi_value_column_push()["category"],
-                                                  chart_series=self.dataprocessor.multi_value_column_push()["series"],
-                                                  origin=self.chart_origin_anchor,
-                                                  size=self.chart_box_size,
-                                                  chart_type="bar",
-                                                  chart_format=chart_created_config["format"])
+            chartcreator = data2chart.ChartCreator(chart_category=self.dataprocessor.multi_value_column_push()["category"],
+                                                   chart_series=self.dataprocessor.multi_value_column_push()["series"],
+                                                   origin=self.chart_origin_anchor,
+                                                   size=self.chart_box_size,
+                                                   chart_type="bar",
+                                                   chart_format=chart_created_config["format"])
             slide = chartcreator.chart_create_on_slide(slide)
             self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
 
@@ -198,7 +198,7 @@ class PrsLayoutManager:
 
             self.chart_box_size = [self.chart_box_size[0], self.chart_box_size[1] / chart_size_split_num]
             for chart_id in range(0, chart_num):
-                chartcreator = data2chart.ChatCreator(
+                chartcreator = data2chart.ChartCreator(
                     chart_category=self.dataprocessor.multi_category_multi_value_column_push(chart_id)["category"],
                     chart_series=self.dataprocessor.multi_category_multi_value_column_push(chart_id)["series"],
                     origin=self.chart_origin_anchor,
@@ -218,7 +218,7 @@ class PrsLayoutManager:
             self.chart_box_size = [size_ele / chart_num for size_ele in self.chart_box_size]
 
             for chart_id in range(0, chart_num):
-                chartcreator = data2chart.ChatCreator(
+                chartcreator = data2chart.ChartCreator(
                     chart_category=self.dataprocessor.multiple_dummy_one_column_push(chart_id)["category"],
                     chart_series=self.dataprocessor.multiple_dummy_one_column_push(chart_id)["series"],
                     origin=self.chart_origin_anchor,
