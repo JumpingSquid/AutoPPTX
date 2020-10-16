@@ -33,7 +33,7 @@ class ChatCreator:
         self.size = size
         self.chart_type = chart_type
 
-        self.chart_format = self.chart_format_infer()
+        self.chart_format = self.chart_format_inference()
 
         if chart_format is not None:
             for k in chart_format:
@@ -240,7 +240,7 @@ class ChatCreator:
             self.chart_category = data.index.to_list()
             self.chart_series = [("series_1", tuple(data.values.to_list()))]
 
-    def chart_format_infer(self):
+    def chart_format_inference(self):
         chart_format = {"legend_bool": True,
                         "label_bool": True,
                         "chart_bool": True,

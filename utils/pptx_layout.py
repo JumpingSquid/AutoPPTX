@@ -269,30 +269,6 @@ class PrsLayoutManager:
         p.font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
         return self.presentation
 
-    def add_comment_on_slide(self, commentcreator):
-        # the position of the comment
-        left = top = Inches(0)
-        width = Inches(13.33)
-        height = Inches(0.4)
-        txBox = self.slide.shapes.add_textbox(left, top, width, height)
-
-        # the color of the comment
-        fill = txBox.fill
-        fill.solid()
-        fill.fore_color.rgb = RGBColor(200, 200, 200)
-
-        # the content and the format of the comment
-        tf = txBox.text_frame
-        tf.clear()  # not necessary for newly-created shape
-        p = tf.paragraphs[0]
-        run = p.add_run()
-        run.text = commentcreator.comment_create()
-        font = run.font
-        font.name = textbox("comment_font")
-        font.size = Pt(16)
-        font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
-        return self.presentation
-
     def add_table_on_slide(self, tablecreator: TableCreator):
         # the position of the comment
         left = tablecreator.origin[0]
