@@ -3,10 +3,10 @@ from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.util import Inches, Pt
 
-from autoppt_util import data2chart
-from autoppt_util.data2table import TableCreator
-from autoppt_util.pptx_params import textbox
-from data_preprocessing import chart_data_preprocessor
+from utils import data2chart
+from utils.data2table import TableCreator
+from utils.pptx_params import textbox
+from preprocessing import chart_data_preprocessor
 
 
 class PrsLayoutManager:
