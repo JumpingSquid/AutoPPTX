@@ -11,7 +11,7 @@ The package provides an API for creating presentation charts or other objects mo
     pptx.add_chart(data=df, slide_id="main_page", slide_type='line')  
     pptx.add_chart(data=df, slide_id="slide_2", slide_type='bar')  
     pptx.add_chart(data=df, slide_id="slide_3", slide_type='pie')
-
+    pptx.save("new.pptx")
 
  ___
 Modified under The MIT License (MIT)
