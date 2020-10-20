@@ -18,6 +18,7 @@ from pptx.util import Pt
 from pptx import Presentation
 from pptx.util import Inches
 
+import pandas
 
 class ChartCreator:
 
@@ -25,9 +26,6 @@ class ChartCreator:
                  prs=None,
                  origin=None,
                  size=None,
-                 chart_category=None,
-                 chart_series=None,
-                 chart_type="line",
                  chart_format=None
                  ):
 
@@ -41,11 +39,6 @@ class ChartCreator:
         self.slide_pool = {}
         bullet_slide_layout = self.prs.slide_layouts[6]
         self.slide_pool[0] = self.prs.slides.add_slide(bullet_slide_layout)
-
-        if chart_series is not None:
-            self.chart_series = chart_series
-            if chart_category is not None:
-                self.chart_category = chart_category
 
         if origin is not None:
             self.origin = origin
@@ -68,14 +61,7 @@ class ChartCreator:
             for k in chart_format:
                 self.chart_format[k] = chart_format[k]
 
-    def chart_create(self, slide, chart_type):
-        # define categorical data
-        chart_data = CategoryChartData()
-        chart_data.categories = [cat for cat in self.chart_category]
-
-        # define value data -
-        for series in self.chart_series:
-            chart_data.add_series(series[0], series[1])
+    def chart_create(self, data, slide, chart_type):
 
         # set the position of the chart
         x, y = self.origin[0], self.origin[1]
@@ -90,7 +76,7 @@ class ChartCreator:
                            "line": XL_CHART_TYPE.LINE}
 
         graphic_frame = slide.shapes.add_chart(
-            chart_type_dict[chart_type], x, y, cx, cy, chart_data
+            chart_type_dict[chart_type], x, y, cx, cy, data
         )
 
         # chart default theme setting
@@ -104,10 +90,17 @@ class ChartCreator:
         return slide
 
     def add_chart(self, data, slide_id, chart_type):
-        if chart_type in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
-            return self.chart_create(self.slide_pool[slide_id], chart_type)
+        chart_data = None
+
+        if chart_type not in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
+            raise ValueError(f"Unknow chart type: {chart_type} is given")
+
+        if isinstance(data, pandas.DataFrame):
+            chart_data = self.pandas_to_ppt_table(data)
         else:
-            raise ValueError(f"Unknow chart type: {str(chart_type)} is given")
+            raise TypeError("data type is not supported")
+
+        return self.chart_create(chart_data, self.slide_pool[slide_id], chart_type)
 
     def add_slide(self, slide_id, slide_type, overwrite=False):
         assert isinstance(slide_id, int)
@@ -117,19 +110,18 @@ class ChartCreator:
         bullet_slide_layout = self.prs.slide_layouts[slide_type]
         self.slide_pool[slide_id] = self.prs.slides.add_slide(bullet_slide_layout)
 
-    def pandas_to_ppt_series(self, data):
-        import pandas
-        if isinstance(data, pandas.DataFrame):
-            chart_series = []
-            for col in data.columns:
-                chart_series.append((str(col), data[col]))
+    @staticmethod
+    def pandas_to_ppt_table(dataframe):
+        assert isinstance(dataframe, pandas.DataFrame)
 
-            self.chart_category = data.index.to_list()
-            self.chart_series = chart_series
+        data = CategoryChartData()
+        col_lst = dataframe.columns.to_list()
+        data.categories = col_lst
 
-        elif isinstance(data, pandas.Series):
-            self.chart_category = data.index.to_list()
-            self.chart_series = [("series_1", tuple(data.values.to_list()))]
+        for i, r in dataframe.iterrows():
+            data.add_series(i, tuple([r[col] for col in col_lst]))
+
+        return data
 
     @staticmethod
     def create_prs() -> Presentation():
