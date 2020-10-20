@@ -63,7 +63,8 @@ class ChartCreator:
         self.chart_type = chart_type
 
         # create default chart format
-        self.chart_format = self.chart_format_inference()
+        self.chart_format_setter = ChartFormatSetter()
+        self.chart_format = self.chart_format_setter.chart_format_inference()
 
         # if some params are given, adjust to new
         if chart_format is not None:
@@ -110,6 +111,41 @@ class ChartCreator:
             return self.chart_create(self.slide_pool[slide_id])
         else:
             raise ValueError("Unknow chart type: " + str(self.chart_type) + "is given")
+
+    def add_slide(self, slide_id, slide_type, overwrite=False):
+        assert isinstance(slide_id, int)
+        if slide_id in self.slide_pool:
+            if not overwrite:
+                raise ValueError(f"slide id {slide_id} existing")
+        bullet_slide_layout = self.prs.slide_layouts[slide_type]
+        self.slide_pool[slide_id] = self.prs.slides.add_slide(bullet_slide_layout)
+
+    def pandas_to_ppt_series(self, data):
+        import pandas
+        if isinstance(data, pandas.DataFrame):
+            chart_series = []
+            for col in data.columns:
+                chart_series.append((str(col), data[col]))
+
+            self.chart_category = data.index.to_list()
+            self.chart_series = chart_series
+
+        elif isinstance(data, pandas.Series):
+            self.chart_category = data.index.to_list()
+            self.chart_series = [("series_1", tuple(data.values.to_list()))]
+
+    @staticmethod
+    def create_prs() -> Presentation():
+        prs = Presentation()
+        # slide size: 16:9
+        prs.slide_width = Inches(13.33)
+        prs.slide_height = Inches(7.5)
+        return prs
+
+
+class ChartFormatSetter:
+    def __init__(self):
+        self.chart_format = None
 
     def chartformat(self, chart):
         chart.value_axis.visible = False
@@ -244,35 +280,6 @@ class ChartCreator:
                                                colormap[colormap_index % len(colormap)][1],
                                                colormap[colormap_index % len(colormap)][2])
                 colormap_index += 1
-
-    def create_prs(self) -> Presentation():
-        prs = Presentation()
-        # slide size: 16:9
-        prs.slide_width = Inches(13.33)
-        prs.slide_height = Inches(7.5)
-        return prs
-
-    def add_slide(self, slide_id, slide_type, overwrite=False):
-        assert isinstance(slide_id, int)
-        if slide_id in self.slide_pool:
-            if not overwrite:
-                raise ValueError(f"slide id {slide_id} existing")
-        bullet_slide_layout = self.prs.slide_layouts[slide_type]
-        self.slide_pool[slide_id] = self.prs.slides.add_slide(bullet_slide_layout)
-
-    def pandas_to_ppt_series(self, data):
-        import pandas
-        if isinstance(data, pandas.DataFrame):
-            chart_series = []
-            for col in data.columns:
-                chart_series.append((str(col), data[col]))
-
-            self.chart_category = data.index.to_list()
-            self.chart_series = chart_series
-
-        elif isinstance(data, pandas.Series):
-            self.chart_category = data.index.to_list()
-            self.chart_series = [("series_1", tuple(data.values.to_list()))]
 
     def chart_format_inference(self):
         chart_format = {"legend_bool": True,
