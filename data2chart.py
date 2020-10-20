@@ -278,8 +278,7 @@ class ChartFormatSetter:
                         "label_font_size": Pt(9),
                         "chart_font_size": Pt(9),
                         "label_number_format": "0.0"}
-
-        if all([all(float(number_ele).is_integer() for number_ele in x[1]) for x in self.chart_series]):
-            chart_format["label_number_format"] = "0"
-
+        if self.chart_format:
+            for chart_format_key in self.chart_format:
+                chart_format[chart_format_key] = self.chart_format[chart_format_key]
         return chart_format
