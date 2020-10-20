@@ -20,6 +20,7 @@ from pptx.util import Inches
 
 import pandas
 
+
 class ChartCreator:
 
     def __init__(self,
@@ -81,11 +82,11 @@ class ChartCreator:
 
         # chart default theme setting
         if chart_type == "pie":
-            self.chart_format_setter.piechartformat(graphic_frame.chart)
+            self.chart_format_setter.pie_chart_format(graphic_frame.chart)
         elif chart_type == "line":
-            self.chart_format_setter.linechartformat(graphic_frame.chart)
+            self.chart_format_setter.line_chart_format(graphic_frame.chart)
         else:
-            self.chart_format_setter.chartformat(graphic_frame.chart)
+            self.chart_format_setter.general_chart_format(graphic_frame.chart)
 
         return slide
 
@@ -109,6 +110,13 @@ class ChartCreator:
                 raise ValueError(f"slide id {slide_id} existing")
         bullet_slide_layout = self.prs.slide_layouts[slide_type]
         self.slide_pool[slide_id] = self.prs.slides.add_slide(bullet_slide_layout)
+
+    def save(self, filepath):
+        try:
+            self.prs.save(filepath)
+            return 1
+        except Exception:
+            return -1
 
     @staticmethod
     def pandas_to_ppt_table(dataframe):
@@ -136,7 +144,7 @@ class ChartFormatSetter:
     def __init__(self):
         self.chart_format = None
 
-    def chartformat(self, chart):
+    def general_chart_format(self, chart):
         chart.value_axis.visible = False
         chart.value_axis.has_major_gridlines = False
         chart.font.size = self.chart_format["chart_font_size"]
@@ -191,7 +199,7 @@ class ChartFormatSetter:
                 colormap_index += 1
         return
 
-    def linechartformat(self, chart):
+    def line_chart_format(self, chart):
         chart.value_axis.visible = False
         chart.value_axis.has_major_gridlines = False
         chart.font.size = self.chart_format["chart_font_size"]
@@ -238,7 +246,7 @@ class ChartFormatSetter:
                 colormap_index += 1
         return
 
-    def piechartformat(self, chart):
+    def pie_chart_format(self, chart):
         chart.has_legend = self.chart_format["legend_bool"]
         chart.font.size = self.chart_format["chart_font_size"]
         # set title
