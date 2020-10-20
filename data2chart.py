@@ -44,13 +44,7 @@ class ChartCreator:
         self.size = (Inches(13), Inches(6))
 
         # create default chart format
-        self.chart_format_setter = ChartFormatSetter()
-        self.chart_format = self.chart_format_setter.chart_format_inference()
-
-        # if some params are given, adjust to new
-        if chart_format is not None:
-            for k in chart_format:
-                self.chart_format[k] = chart_format[k]
+        self.chart_format_setter = ChartFormatSetter(chart_format)
 
     def chart_create(self, data, slide, chart_type, location=None):
 
@@ -81,7 +75,7 @@ class ChartCreator:
         else:
             self.chart_format_setter.general_chart_format(graphic_frame.chart)
 
-    def add_chart(self, data, slide_id, chart_type, location):
+    def add_chart(self, data, slide_id, chart_type, location=None):
         chart_data = None
 
         if chart_type not in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
@@ -95,7 +89,6 @@ class ChartCreator:
         self.chart_create(chart_data, self.slide_pool[slide_id], chart_type, location)
 
     def add_slide(self, slide_id, slide_type, overwrite=False):
-        assert isinstance(slide_id, int)
         if slide_id in self.slide_pool:
             if not overwrite:
                 raise ValueError(f"slide id {slide_id} existing")
@@ -132,8 +125,8 @@ class ChartCreator:
 
 
 class ChartFormatSetter:
-    def __init__(self):
-        self.chart_format = None
+    def __init__(self, chart_format=None):
+        self.chart_format = self.chart_format_inference(chart_format)
 
     def general_chart_format(self, chart):
         chart.value_axis.visible = False
@@ -269,8 +262,9 @@ class ChartFormatSetter:
                                                colormap[colormap_index % len(colormap)][2])
                 colormap_index += 1
 
-    def chart_format_inference(self):
-        chart_format = {"legend_bool": True,
+    def chart_format_inference(self, predefined_chart_format=None):
+        chart_format = {"chart_title": "",
+                        "legend_bool": True,
                         "label_bool": True,
                         "chart_bool": True,
                         "colormap": None,
@@ -278,7 +272,7 @@ class ChartFormatSetter:
                         "label_font_size": Pt(9),
                         "chart_font_size": Pt(9),
                         "label_number_format": "0.0"}
-        if self.chart_format:
-            for chart_format_key in self.chart_format:
-                chart_format[chart_format_key] = self.chart_format[chart_format_key]
+        if predefined_chart_format is not None:
+            for chart_format_key in predefined_chart_format:
+                chart_format[chart_format_key] = predefined_chart_format[chart_format_key]
         return chart_format
