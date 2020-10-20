@@ -3,7 +3,16 @@ AutoPPTX is a package based on python-pptx(https://python-pptx.readthedocs.io/en
 The package provides an API for creating presentation charts or other objects more easily,
  especially the case that multiple slides with multiple objects needed to be created.
  
- 
+## 1. Creating presentation with charts
+    pptx = ChartCreator()
+    pptx.add_slide("main_page") 
+    pptx.add_slide("slide_2")  
+    pptx.add_slide("slide_3")  
+    pptx.add_chart(data=df, slide_id="main_page", slide_type='line')  
+    pptx.add_chart(data=df, slide_id="slide_2", slide_type='bar')  
+    pptx.add_chart(data=df, slide_id="slide_3", slide_type='pie')
+
+
  ___
 Modified under The MIT License (MIT)
 

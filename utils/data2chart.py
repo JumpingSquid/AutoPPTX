@@ -60,8 +60,6 @@ class ChartCreator:
             print("Warning: No origin is give, use (6 inch,6 inch) as default")
             self.size = (Inches(13), Inches(6))
 
-        self.chart_type = chart_type
-
         # create default chart format
         self.chart_format_setter = ChartFormatSetter()
         self.chart_format = self.chart_format_setter.chart_format_inference()
@@ -71,7 +69,7 @@ class ChartCreator:
             for k in chart_format:
                 self.chart_format[k] = chart_format[k]
 
-    def chart_create(self, slide):
+    def chart_create(self, slide, chart_type):
         # define categorical data
         chart_data = CategoryChartData()
         chart_data.categories = [cat for cat in self.chart_category]
@@ -93,24 +91,24 @@ class ChartCreator:
                            "line": XL_CHART_TYPE.LINE}
 
         graphic_frame = slide.shapes.add_chart(
-            chart_type_dict[self.chart_type], x, y, cx, cy, chart_data
+            chart_type_dict[chart_type], x, y, cx, cy, chart_data
         )
 
         # chart default theme setting
-        if self.chart_type == "pie":
-            self.piechartformat(graphic_frame.chart)
-        elif self.chart_type == "line":
-            self.linechartformat(graphic_frame.chart)
+        if chart_type == "pie":
+            self.chart_format_setter.piechartformat(graphic_frame.chart)
+        elif chart_type == "line":
+            self.chart_format_setter.linechartformat(graphic_frame.chart)
         else:
-            self.chartformat(graphic_frame.chart)
+            self.chart_format_setter.chartformat(graphic_frame.chart)
 
         return slide
 
-    def add_chart(self, slide_id):
-        if self.chart_type in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
-            return self.chart_create(self.slide_pool[slide_id])
+    def add_chart(self, data, slide_id, chart_type):
+        if chart_type in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
+            return self.chart_create(self.slide_pool[slide_id], chart_type)
         else:
-            raise ValueError("Unknow chart type: " + str(self.chart_type) + "is given")
+            raise ValueError(f"Unknow chart type: {str(chart_type)} is given")
 
     def add_slide(self, slide_id, slide_type, overwrite=False):
         assert isinstance(slide_id, int)
