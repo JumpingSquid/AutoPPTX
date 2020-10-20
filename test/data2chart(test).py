@@ -48,5 +48,10 @@ class TestPptxCreate(TestChart):
 
     def test_prs_save(self):
         # the save function will return 1 if save successfully
+        self.chart_creator.add_slide("page_3", 6)
+        df = pd.DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+                          index=[f'series{i}' for i in range(1, 4)],
+                          columns=[f'category{i}' for i in range(1, 4)])
+        self.chart_creator.add_chart(df, "page_3", "bar")
         output = self.chart_creator.save("new.pptx")
         self.assertEqual(output, 1)
