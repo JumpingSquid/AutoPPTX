@@ -1,8 +1,9 @@
 import pandas as pd
+import data2table
+
 from pptx import Presentation
 from pptx.util import Inches
-
-from utils import pptx_layout, data2table
+from utils import pptx_layout
 from preprocessing import chart_data_preprocessor
 
 
