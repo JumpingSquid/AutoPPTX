@@ -31,23 +31,41 @@ class ChartCreator:
                  chart_type="line",
                  chart_format=None
                  ):
+
         if prs is None:
-            self.presentation = self.newprs()
+            # initializing a basic presentation file when no existing file is given
+            self.prs = self.create_prs()
         else:
             assert isinstance(Presentation, prs)
-            self.presentation = prs
+            self.prs = prs
+
+        self.slide_pool = {}
+        bullet_slide_layout = self.prs.slide_layouts[6]
+        self.slide_pool[0] = self.prs.slides.add_slide(bullet_slide_layout)
 
         if chart_series is not None:
             self.chart_series = chart_series
             if chart_category is not None:
                 self.chart_category = chart_category
 
-        self.origin = origin
-        self.size = size
+        if origin is not None:
+            self.origin = origin
+        else:
+            print("Warning: No origin is give, use (0,0) as default")
+            self.origin = (Inches(0), Inches(0))
+
+        if size is not None:
+            self.size = size
+        else:
+            print("Warning: No origin is give, use (6 inch,6 inch) as default")
+            self.size = (Inches(13), Inches(6))
+
         self.chart_type = chart_type
 
+        # create default chart format
         self.chart_format = self.chart_format_inference()
 
+        # if some params are given, adjust to new
         if chart_format is not None:
             for k in chart_format:
                 self.chart_format[k] = chart_format[k]
@@ -87,9 +105,9 @@ class ChartCreator:
 
         return slide
 
-    def chart_create_on_slide(self, slide):
+    def add_chart(self, slide_id):
         if self.chart_type in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
-            return self.chart_create(slide)
+            return self.chart_create(self.slide_pool[slide_id])
         else:
             raise ValueError("Unknow chart type: " + str(self.chart_type) + "is given")
 
@@ -227,17 +245,20 @@ class ChartCreator:
                                                colormap[colormap_index % len(colormap)][2])
                 colormap_index += 1
 
-    def newprs(self) -> Presentation():
+    def create_prs(self) -> Presentation():
         prs = Presentation()
         # slide size: 16:9
         prs.slide_width = Inches(13.33)
         prs.slide_height = Inches(7.5)
-        bullet_slide_layout = prs.slide_layouts[6]
-        slide = prs.slides.add_slide(bullet_slide_layout)
-        self.origin = [Inches(0), Inches(1.65)]
-        self.size = [Inches(13), Inches(6)]
-        self.chart_create(slide)
         return prs
+
+    def add_slide(self, slide_id, slide_type, overwrite=False):
+        assert isinstance(slide_id, int)
+        if slide_id in self.slide_pool:
+            if not overwrite:
+                raise ValueError(f"slide id {slide_id} existing")
+        bullet_slide_layout = self.prs.slide_layouts[slide_type]
+        self.slide_pool[slide_id] = self.prs.slides.add_slide(bullet_slide_layout)
 
     def pandas_to_ppt_series(self, data):
         import pandas
