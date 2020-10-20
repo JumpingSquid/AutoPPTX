@@ -8,9 +8,9 @@ The package provides an API for creating presentation charts or other objects mo
     pptx.add_slide("main_page") 
     pptx.add_slide("slide_2")  
     pptx.add_slide("slide_3")  
-    pptx.add_chart(data=df, slide_id="main_page", slide_type='line')  
-    pptx.add_chart(data=df, slide_id="slide_2", slide_type='bar')  
-    pptx.add_chart(data=df, slide_id="slide_3", slide_type='pie')
+    pptx.add_chart(data=df, slide_id="main_page", chart_type='line')  
+    pptx.add_chart(data=df, slide_id="slide_2", chart_type='bar')  
+    pptx.add_chart(data=df, slide_id="slide_3", chart_type='pie')
     pptx.save("new.pptx")
 
  ___
