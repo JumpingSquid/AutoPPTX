@@ -4,7 +4,7 @@ The package provides an API for creating presentation charts or other objects mo
  especially the case that multiple slides with multiple objects needed to be created.
  
 ## Example 
-### 1. Creating charts on pptx with Pandas
+### 1. Data2Chart: Creating charts on pptx with Pandas
     pptx = ChartCreator()
     pptx.add_slide("main_page") 
     pptx.add_slide("slide_2")  
