@@ -6,9 +6,8 @@ Data2Chart creates chart(s) on presentation object(prs).
 prs can be taken as input or o/w initialized at the beginning.
 ver 1.1 allows for direct output of prs file with chart, while it's still available
   being called by pptx_construct
-For simplicity, Data2chart should not allow for complicated layout manipulation,
-that is, one slide for one chart rule should be follow.
-To create slide with multiple charts, one should use pptx_construct instead.
+For simplicity, Data2chart should not allow for complicated layout manipulation.
+To create slide with multiple charts and auto layout management, one should use pptx_construct instead.
 """
 
 from pptx.chart.data import CategoryChartData
