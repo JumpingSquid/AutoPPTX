@@ -103,6 +103,7 @@ class ChartCreator:
             return -1
 
     @staticmethod
+    # TODO: handled by chart_data_preprocessor in the future
     def pandas_to_ppt_table(dataframe):
         assert isinstance(dataframe, pandas.DataFrame)
 
