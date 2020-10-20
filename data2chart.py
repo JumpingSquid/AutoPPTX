@@ -73,7 +73,7 @@ class ChartCreator:
             chart_type_dict[chart_type], x, y, cx, cy, data
         )
 
-        # chart default theme setting
+        # chart format setting
         if chart_type == "pie":
             self.chart_format_setter.pie_chart_format(graphic_frame.chart)
         elif chart_type == "line":
