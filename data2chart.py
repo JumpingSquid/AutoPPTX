@@ -46,35 +46,6 @@ class ChartCreator:
         # create default chart format
         self.chart_format_setter = ChartFormatSetter(chart_format)
 
-    def chart_create(self, data, slide, chart_type, location=None):
-
-        # set the position of the chart
-        if location is None:
-            x, y = self.origin[0], self.origin[1]
-            cx, cy = self.size[0], self.size[1]
-        else:
-            x, y, cx, cy = location
-
-        # add chart to slide
-        chart_type_dict = {"hist": XL_CHART_TYPE.COLUMN_CLUSTERED,
-                           "stackbar": XL_CHART_TYPE.BAR_STACKED_100,
-                           "stackcolumn": XL_CHART_TYPE.COLUMN_STACKED_100,
-                           "bar": XL_CHART_TYPE.BAR_CLUSTERED,
-                           "pie": XL_CHART_TYPE.PIE,
-                           "line": XL_CHART_TYPE.LINE}
-
-        graphic_frame = slide.shapes.add_chart(
-            chart_type_dict[chart_type], x, y, cx, cy, data
-        )
-
-        # chart format setting
-        if chart_type == "pie":
-            self.chart_format_setter.pie_chart_format(graphic_frame.chart)
-        elif chart_type == "line":
-            self.chart_format_setter.line_chart_format(graphic_frame.chart)
-        else:
-            self.chart_format_setter.general_chart_format(graphic_frame.chart)
-
     def add_chart(self, data, slide_id, chart_type, location=None):
         chart_data = None
 
@@ -86,7 +57,7 @@ class ChartCreator:
         else:
             raise TypeError("data type is not supported")
 
-        self.chart_create(chart_data, self.slide_pool[slide_id], chart_type, location)
+        self._create_chart(chart_data, self.slide_pool[slide_id], chart_type, location)
 
     def add_slide(self, slide_id, slide_type, overwrite=False):
         if slide_id in self.slide_pool:
@@ -123,6 +94,35 @@ class ChartCreator:
         prs.slide_width = Inches(13.33)
         prs.slide_height = Inches(7.5)
         return prs
+
+    def _create_chart(self, data, slide, chart_type, location=None):
+        # change into private method, only called by the add_chart
+        # set the position of the chart
+        if location is None:
+            x, y = self.origin[0], self.origin[1]
+            cx, cy = self.size[0], self.size[1]
+        else:
+            x, y, cx, cy = location
+
+        # add chart to slide
+        chart_type_dict = {"hist": XL_CHART_TYPE.COLUMN_CLUSTERED,
+                           "stackbar": XL_CHART_TYPE.BAR_STACKED_100,
+                           "stackcolumn": XL_CHART_TYPE.COLUMN_STACKED_100,
+                           "bar": XL_CHART_TYPE.BAR_CLUSTERED,
+                           "pie": XL_CHART_TYPE.PIE,
+                           "line": XL_CHART_TYPE.LINE}
+
+        graphic_frame = slide.shapes.add_chart(
+            chart_type_dict[chart_type], x, y, cx, cy, data
+        )
+
+        # chart format setting
+        if chart_type == "pie":
+            self.chart_format_setter.pie_chart_format(graphic_frame.chart)
+        elif chart_type == "line":
+            self.chart_format_setter.line_chart_format(graphic_frame.chart)
+        else:
+            self.chart_format_setter.general_chart_format(graphic_frame.chart)
 
 
 class ChartFormatSetter:
