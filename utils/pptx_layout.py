@@ -15,6 +15,7 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.util import Inches, Pt
 
 import data2chart
+from data2table import TableCreator
 from utils.pptx_params import textbox
 
 
@@ -26,6 +27,7 @@ class PrsLayoutManager:
         self.prs_width = presentation.slide_width
         self.data_container = None
         self.layout_design = None
+        self.table_creator = TableCreator()
 
         # read in the title config
         # if no title in the config, use the blank slide instead
@@ -64,8 +66,7 @@ class PrsLayoutManager:
         # store the object that exists on the slide
         self.object_pool = []
 
-    def _set_processed_data(self, processed_data):
-        self.processed_data = processed_data
+
 
     def slide_chart_layout(self, slide, chart_uid):
         # load the format of the chart
@@ -76,108 +77,7 @@ class PrsLayoutManager:
         # basic chart type: hist, stacked bar, stacked column, pie
         print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
         chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
-
-        if chart_created_config["type"] in ["hist", "stackbar", "stackcolumn"]:
-            chartcreator.add_chart(slide)
-            self.sample_size_legend(slide, self.data_container.samplecount, left=self.chart_origin_anchor[0])
-            self.object_pool.append((self.chart_origin_anchor, self.chart_box_size, chart_created_config["type"]))
-            self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        # basic chart type: pie
-        elif chart_created_config["type"] in ["pie", "p"]:
-            chartcreator.add_chart(slide)
-            self.sample_size_legend(slide, self.data_container.totalsample, left=self.chart_origin_anchor[0])
-            self.object_pool.append((self.chart_origin_anchor, self.chart_box_size, chart_created_config["type"]))
-
-            # new function: add appendix under the chart created
-            if chart_created_config["appendix"] is not None:
-                appendix_bias = self.chart_origin_anchor[1] + self.chart_box_size[1]
-                for appendix_ele in chart_created_config["appendix"]:
-                    appendix_bias = self.chart_appendix(slide,
-                                                        appendix_ele,
-                                                        left=self.chart_origin_anchor[0],
-                                                        top=appendix_bias,
-                                                        width=self.chart_box_size[0])
-
-            self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        elif chart_created_config["type"] in ["sep_bar", "sep_b"]:
-            chartcreator.add_chart(slide)
-            self.sample_size_legend(slide, self.data_container.totalsample, left=self.chart_origin_anchor[0])
-            self.object_pool.append((self.chart_origin_anchor, self.chart_box_size, chart_created_config["type"]))
-
-            # new function: add appendix under the chart created
-            if chart_created_config["appendix"] is not None:
-                appendix_bias = self.chart_origin_anchor[1] + self.chart_box_size[1]
-                for appendix_ele in chart_created_config["appendix"]:
-                    appendix_bias = self.chart_appendix(slide,
-                                                        appendix_ele,
-                                                        left=self.chart_origin_anchor[0],
-                                                        top=appendix_bias,
-                                                        width=self.chart_box_size[0])
-
-            self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        elif chart_created_config["type"] == ["line", "l"]:
-            chartcreator.add_chart(slide)
-            self.sample_size_legend(slide, self.data_container.samplecount, left=self.chart_origin_anchor[0])
-            self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        elif chart_created_config["type"] in ["single_category_multiple_bar", "scmb"]:
-            chart_num = self.data_container.category_num
-            print("INFO: chart type", chart_created_config["type"], "requires", chart_num, "charts")
-            self.sample_size_legend(slide, self.data_container.samplecount, left=self.chart_origin_anchor[0])
-            chart_size_split_num = chart_num // 3
-            if chart_num % 3 != 0:
-                chart_size_split_num += 1
-            self.chart_box_size = [self.chart_box_size[0] / chart_size_split_num, self.chart_box_size[1] / 3.2]
-            for chart_id in range(0, chart_num):
-                chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
-                slide = chartcreator.add_chart(slide)
-                if chart_id % 3 != 2:
-                    self.chart_origin_anchor = [self.chart_origin_anchor[0],
-                                                self.chart_origin_anchor[1] + self.chart_box_size[1]]
-                else:
-                    self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0],
-                                                Inches(1.65)]
-            if chart_num % 3 != 0:
-                self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-            else:
-                self.chart_origin_anchor = [self.chart_origin_anchor[0], Inches(1.65)]
-
-        elif chart_created_config["type"] in ["multiple_value_column_bar", "mv"]:
-            chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
-            slide = chartcreator.add_chart(slide)
-            self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        elif chart_created_config["type"] in ["multiple_category_multiple_value_column_bar", "mcmv"]:
-            chart_num = self.data_container.category_num
-            print("INFO: chart type", chart_created_config["type"], "requires", chart_num, "charts")
-
-            chart_size_split_num = chart_num
-
-            self.chart_box_size = [self.chart_box_size[0], self.chart_box_size[1] / chart_size_split_num]
-            for chart_id in range(0, chart_num):
-                slide = chartcreator.add_chart(slide)
-                self.chart_origin_anchor = [self.chart_origin_anchor[0],
-                                            self.chart_origin_anchor[1] + self.chart_box_size[1]]
-
-            self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        elif chart_created_config["type"] in ["multiple_dummy_one_column_bar", "mdc"]:
-            chart_num = len(self.chart_config[self._chart_id]["cat_columns"])
-            print("INFO: chart type", chart_created_config["type"], "requires", chart_num, "charts")
-
-            self.chart_box_size = [size_ele / chart_num for size_ele in self.chart_box_size]
-
-            for chart_id in range(0, chart_num):
-                chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
-                slide = chartcreator.add_chart(slide)
-                self.chart_origin_anchor = [self.chart_origin_anchor[0] + self.chart_box_size[0], Inches(1.65)]
-
-        else:
-            raise ValueError("ERROR: Unknow type of chart,", chart_created_config["type"], "is introduced")
-
+        chartcreator.add_chart(slide, chart_type=chart_created_config["type"])
         return slide
 
     def add_chart_on_slide(self):
@@ -202,36 +102,38 @@ class PrsLayoutManager:
                 self.chart_box_size = self.custom_layout_config["size"][self._chart_id]
         return self.presentation
 
-    def add_title_on_slide(self):
-        # create title
-        shapes = self.slide.shapes
+    def add_text_on_slide(self, slide):
+        # create text box
+        shapes = slide.shapes
         title_shape = shapes.title
         text_frame = title_shape.text_frame
         text_frame.clear()
         p = text_frame.paragraphs[0]
+
+        # text box content is determined here
         p.text = self.title_config
         p.alignment = PP_PARAGRAPH_ALIGNMENT.LEFT
         p.font.name = textbox("title_font")
         p.font.size = Pt(40)
         p.font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
-        return self.presentation
+        return slide
 
-    def add_table_on_slide(self, tablecreator):
+    def add_table_on_slide(self, slide):
         # the position of the comment
-        left = tablecreator.origin[0]
-        top = tablecreator.origin[1]
-        width = tablecreator.width
-        height = tablecreator.height
-        row_num = tablecreator.row_num
-        col_num = tablecreator.col_num
-        table = self.slide.shapes.add_table(row_num, col_num, left, top, width, height).table
-        tablecreator.table_data_fill(table)
-        return self.presentation
+        # location should be the arguments!
+        left = self.table_creator.origin[0]
+        top = self.table_creator.origin[1]
+        width = self.table_creator.width
+        height = self.table_creator.height
+        row_num = self.table_creator.row_num
+        col_num = self.table_creator.col_num
+        table = slide.shapes.add_table(row_num, col_num, left, top, width, height).table
+        self.table_creator.table_data_fill(table)
+        return slide
 
     # create a warning tag on the chart where the sample size is below 15
 
-
-    # draw the layout setting on the screen, assist checking the number and the location of object created
+    # draw the layout design on the screen, assist checking the number and the location of object created
     def layout_describe(self):
 
         def square_painter(draw_lst, x, y, lx, ly):
@@ -243,12 +145,12 @@ class PrsLayoutManager:
 
         draw_point = []
         draw_point = square_painter(draw_point, 0, 0, 55, 17)
-        for object in self.object_pool:
+        for obj in self.layout_design:
             draw_point = square_painter(draw_point,
-                                        int(object[0][0]/Inches(13.33)*55),
-                                        int(object[0][1]/Inches(7.5)*17),
-                                        int(object[1][0]/Inches(13.33)*55),
-                                        int(object[1][1]/Inches(7.5)*17))
+                                        int(obj[0][0]/Inches(13.33)*55),
+                                        int(obj[0][1]/Inches(7.5)*17),
+                                        int(obj[1][0]/Inches(13.33)*55),
+                                        int(obj[1][1]/Inches(7.5)*17))
 
         for y_painter in range(0, 18):
             drawer = ""
@@ -259,31 +161,9 @@ class PrsLayoutManager:
                     drawer += " "
             print(drawer)
 
-    # add the sample size legend for the chart created
-    @staticmethod
-    def sample_size_legend(slide, samplecount, left=Inches(0), top=Inches(7.2)):
-        width = Inches(2)
-        height = Inches(0.27)
-        txBox = slide.shapes.add_textbox(left, top, width, height)
-
-        # the color of the comment
-        fill = txBox.fill
-        fill.solid()
-        fill.fore_color.rgb = RGBColor(255, 255, 255)
-
-        # the content and the format of the comment
-        tf = txBox.text_frame
-        tf.clear()  # not necessary for newly-created shape
-        p = tf.paragraphs[0]
-        run = p.add_run()
-        if isinstance(samplecount, str):
-            run.text = samplecount
-        else:
-            run.text = textbox("sample_size_text") + str(samplecount)
-        font = run.font
-        font.name = textbox("sample_size_font")
-        p.alignment = PP_PARAGRAPH_ALIGNMENT.LEFT
-        font.size = Pt(10)
+    # set the data container
+    def _set_data_container(self, data_container):
+        self.data_container = data_container
 
 
 class PrsLayoutDesigner:

@@ -2,14 +2,14 @@ import pandas as pd
 
 
 class TableCreator:
-    def __init__(self, config: dict, data: pd.DataFrame):
-        self.origin = config["origin"]
-        self.width = config["width"]
-        self.height = config["height"]
-        self.row_num = len(data)
-        self.col_num = len(data.columns)
-        self.data = data
-        self.config = config
+    def __init__(self):
+        self.origin = None
+        self.width = None
+        self.height = None
+        self.row_num = None
+        self.col_num = None
+        self.data = None
+        self.config = None
 
     def table_data_fill(self, table):
         for row in range(self.row_num):
