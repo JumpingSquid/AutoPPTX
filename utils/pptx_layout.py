@@ -229,28 +229,7 @@ class PrsLayoutManager:
         return self.presentation
 
     # create a warning tag on the chart where the sample size is below 15
-    @staticmethod
-    def sample_size_warning(slide, left=Inches(8.33), top=Inches(1)):
-        # the position of the comment
-        width = Inches(2.66)
-        height = Inches(0.37)
-        txBox = slide.shapes.add_textbox(left, top, width, height)
 
-        # the color of the comment
-        fill = txBox.fill
-        fill.solid()
-        fill.fore_color.rgb = RGBColor(200, 200, 200)
-
-        # the content and the format of the comment
-        tf = txBox.text_frame
-        tf.clear()  # not necessary for newly-created shape
-        p = tf.paragraphs[0]
-        run = p.add_run()
-        run.text = textbox("sample_warn_text")
-        font = run.font
-        font.name = textbox("sample_warn_font")
-        font.size = Pt(16)
-        return slide
 
     # draw the layout setting on the screen, assist checking the number and the location of object created
     def layout_describe(self):
