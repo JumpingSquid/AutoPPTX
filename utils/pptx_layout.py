@@ -1,12 +1,21 @@
+"""
+Pptx layout contains two modules: Designer and Manager
+Designer: arrange the location of objects, and pass the design structure to Manager
+Manager: receive the design structure from Designer, use the data from DataPreprocessor to create the prs accordingly
+
+Design structure:
+Every objects on the slide, will be given an unique id. Designer will arrange the location of every objects, and
+provide a json format file to the manger, specifying the location of each uid
+"""
+
+
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.util import Inches, Pt
 
 import data2chart
-from data2table import TableCreator
 from utils.pptx_params import textbox
-from preprocessing import chart_data_preprocessor
 
 
 class PrsLayoutManager:
@@ -15,7 +24,8 @@ class PrsLayoutManager:
         self.presentation = presentation
         self.prs_height = presentation.slide_height
         self.prs_width = presentation.slide_width
-        self.dataprocessor = None
+        self.processed_data = None
+        self.layout_design = None
 
         # read in the title config
         # if no title in the config, use the blank slide instead
@@ -54,8 +64,8 @@ class PrsLayoutManager:
         # store the object that exists on the slide
         self.object_pool = []
 
-    def read_dataprocessor(self, dataprocessor: chart_data_preprocessor):
-        self.dataprocessor = dataprocessor
+    def _set_processed_data(self, processed_data):
+        self.processed_data = processed_data
 
     def slide_chart_layout(self, slide):
 
@@ -67,7 +77,7 @@ class PrsLayoutManager:
         if "format" not in chart_created_config:
             chart_created_config["format"] = None
 
-        # basic chart type: hist, stackbar, stackcolumn
+        # basic chart type: hist, stacked bar, stacked column, pie
         print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
         chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
 
@@ -221,7 +231,7 @@ class PrsLayoutManager:
         p.font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
         return self.presentation
 
-    def add_table_on_slide(self, tablecreator: TableCreator):
+    def add_table_on_slide(self, tablecreator):
         # the position of the comment
         left = tablecreator.origin[0]
         top = tablecreator.origin[1]
@@ -366,3 +376,8 @@ class PrsLayoutManager:
         self.object_pool.append(([left, top], [width, height], "chart_appendix"))
 
         return appendix_bias
+
+
+class PrsLayoutDesigner:
+    def __init__(self):
+        self.data = None
