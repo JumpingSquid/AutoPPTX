@@ -66,43 +66,26 @@ class PrsLayoutManager:
         # store the object that exists on the slide
         self.object_pool = []
 
-
-
     def slide_chart_layout(self, slide, chart_uid):
         # load the format of the chart
         chart_created_config = self.chart_config[chart_uid]
         if "format" not in chart_created_config:
             chart_created_config["format"] = None
 
-        # basic chart type: hist, stacked bar, stacked column, pie
         print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
         chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
         chartcreator.add_chart(slide, chart_type=chart_created_config["type"])
         return slide
 
-    def add_chart_on_slide(self):
+    def add_chart_on_slide(self, slide, chart_uid, location):
         # try to create chart, if there is ZeroDivisionError for creating chart data, skip the chart first
         # otherwise stop the task
-        try:
-            self.slide_chart_layout(self.slide)
-            self.chart_rescale = self.chart_config[self._chart_id]["rescale"]
-            print(self._chart_id, "chart is added")
-        except ZeroDivisionError:
-            print("WARN: the chart-", self._chart_id, "incurs ZeroDivisionError, skipped automatically")
-            pass
-        if self._chart_id < self.chart_num_on_slide - 1:
-            self._chart_id += 1
-            # reset the chart size and anchor after creating the chart if no pre-defined layout
-            # o/w navigating to the next object's spec
-            if not self.custom_layout_flag:
-                self.chart_box_size = [self.prs_width / max(3, self.chart_num_on_slide) * self.chart_rescale[0],
-                                       self.prs_height * 0.7 * self.chart_rescale[1]]
-            else:
-                self.chart_origin_anchor = self.custom_layout_config["origin"][self._chart_id]
-                self.chart_box_size = self.custom_layout_config["size"][self._chart_id]
-        return self.presentation
+        self.slide_chart_layout(slide, chart_uid)
+        self.chart_rescale = self.chart_config[self._chart_id]["rescale"]
+        print(self._chart_id, "chart is added")
+        return slide
 
-    def add_text_on_slide(self, slide):
+    def add_text_on_slide(self, slide, text_uid, location):
         # create text box
         shapes = slide.shapes
         title_shape = shapes.title
@@ -118,7 +101,7 @@ class PrsLayoutManager:
         p.font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
         return slide
 
-    def add_table_on_slide(self, slide):
+    def add_table_on_slide(self, slide, table_uid, location):
         # the position of the comment
         # location should be the arguments!
         left = self.table_creator.origin[0]
