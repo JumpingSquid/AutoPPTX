@@ -138,6 +138,21 @@ class PrsLayoutManager:
 
 
 class PrsLayoutDesigner:
+    """
+    PrsLayoutDesigner is only responsible for arranging the location of each object,
+     and determine the size of each object.
+    It does not consider the type or data source of each object.
+
+    In case that no pre-defined layout is given, the module will automatically design the layout.
+    The design principle will be subjective, but follows some principles:
+    (1) avoid overlapping
+    (2) assume all objects are in a shape of square
+    (3) from top to bottom: title-text-chart-text
+    (4) from left to right: text-chart
+
+    After calculating all the location and size, the information will be stored in the object: LayoutDesignContainer.
+    Then LayoutDesignContainer will be passed to PrsLayoutManager to build the final presentation file.
+    """
     def __init__(self, config):
         self.data = None
 
@@ -153,7 +168,7 @@ class PrsLayoutDesigner:
         self._layout_design = LayoutDesignContainer()
 
     def custom_layout_scan(self):
-        # beta: allow for customized layout for charts, but require the user to provide fully defined layout
+        # BETA: allow for customized layout for charts, but require the user to provide fully defined layout
         # the user should provide a list contains (1) origin and (2) the box size for each chart
         # maybe move to an independent module if the analysis is too complicated
         self.custom_layout_flag = True
