@@ -51,15 +51,15 @@ class PptxConstructor:
         self.page_stack = {0: []}
 
     def add_object(self, data, object_type: str,
-                   object_format=None, slide_page=None, location=None):
+                   object_format=None, slide_page=None, position=None):
 
         # assure the object type is text, chart, or table
         assert (object_type == 'text') or (object_type == 'chart') or (object_type == 'table')
 
-        if location is not None:
+        if position is not None:
             # assure the location is in the format of (x, y, w, h)
-            assert isinstance(location, tuple)
-            assert len(location) == 4
+            assert isinstance(position, tuple)
+            assert len(position) == 4
 
         if slide_page is None:
             # if no slide_page is given, create a new slide directly
@@ -72,8 +72,8 @@ class PptxConstructor:
         # Currently do not apply this since no mechanism to handle duplicate objects with different location.
         uid = f"{object_type}_{len(self.prs_object_pool)}"
 
-        ObjectContainer = namedtuple("obj", ['uid', 'data', "obj_type", "obj_format", "slide_page", 'location'])
-        self.prs_object_pool[uid] = ObjectContainer(uid, data, object_type, object_format, slide_page, location)
+        ObjectContainer = namedtuple("obj", ['uid', 'data', "obj_type", "obj_format", "slide_page", 'position'])
+        self.prs_object_pool[uid] = ObjectContainer(uid, data, object_type, object_format, slide_page, position)
         self.page_stack[slide_page].append(uid)
 
     def pptx_execute(self):

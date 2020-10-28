@@ -43,7 +43,7 @@ class ChartCreator:
         # create default chart format
         self.chart_format_setter = ChartFormatSetter(chart_format)
 
-    def add_chart(self, data, slide_id, chart_type, location=None):
+    def add_chart(self, data, slide_id, chart_type, position=None):
         chart_data = None
 
         if chart_type not in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
@@ -54,7 +54,7 @@ class ChartCreator:
         else:
             raise TypeError("data type is not supported")
 
-        self.create_chart(chart_data, self.slide_pool[slide_id], chart_type, location)
+        self.create_chart(chart_data, self.slide_pool[slide_id], chart_type, position)
 
     def add_slide(self, slide_id, slide_type, overwrite=False):
         if slide_id in self.slide_pool:
@@ -92,14 +92,14 @@ class ChartCreator:
         prs.slide_height = Inches(7.5)
         return prs
 
-    def create_chart(self, data, slide, chart_type, location=None):
+    def create_chart(self, data, slide, chart_type, position=None):
         # change into private method, only called by the add_chart
         # set the position of the chart
-        if location is None:
+        if position is None:
             x, y = self.origin[0], self.origin[1]
             w, h = self.size[0], self.size[1]
         else:
-            x, y, w, h = location
+            x, y, w, h = position
 
         # add chart to slide
         chart_type_dict = {"hist": XL_CHART_TYPE.COLUMN_CLUSTERED,

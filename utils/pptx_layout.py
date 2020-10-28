@@ -42,14 +42,14 @@ class PrsLayoutManager:
         self.table_creator = TableCreator()
         self.chart_creator = ChartCreator()
 
-    def add_chart_on_slide(self, data, slide, chart_type, location):
-        slide = self.chart_creator.create_chart(data=data, slide=slide, chart_type=chart_type, location=location)
+    def add_chart_on_slide(self, data, slide, chart_type, position):
+        slide = self.chart_creator.create_chart(data=data, slide=slide, chart_type=chart_type, position=position)
         return slide
 
-    def add_text_on_slide(self, data, slide, location):
+    def add_text_on_slide(self, data, slide, position):
         # create text box
         shapes = slide.shapes
-        x, y, w, h = location
+        x, y, w, h = position
         shape = shapes.add_shape(
             MSO_SHAPE_TYPE.RECTANGLE, x, y, w, h
         )
@@ -65,10 +65,10 @@ class PrsLayoutManager:
         p.font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
         return slide
 
-    def add_table_on_slide(self, data, slide, table_uid, location):
+    def add_table_on_slide(self, data, slide, table_uid, position):
         # the position of the comment
         # location should be the arguments!
-        x, y, w, h = location
+        x, y, w, h = position
         row_num = self.data_container[table_uid].row_num
         col_num = self.data_container[table_uid].col_num
         table = slide.shapes.add_table(row_num, col_num, x, y, w, h).table
@@ -86,40 +86,12 @@ class PrsLayoutManager:
 
                 object_type = uid.split("_")[0]
                 data = self.data_container.get_data(uid)
-                location = self.layout_design_container.get_object_location(page_id, uid)
+                position = self.layout_design_container.get_object_position(page_id, uid)
 
                 if object_type == 'chart':
                     chart_type = self.object_stack[uid].obj_format['chart_type']
-                    slide = self.add_chart_on_slide(data=data, slide=slide, chart_type=chart_type, location=location)
+                    slide = self.add_chart_on_slide(data=data, slide=slide, chart_type=chart_type, position=position)
         return None
-
-    # draw the layout design on the screen, assist checking the number and the location of object created
-    def layout_describe(self):
-
-        def square_painter(draw_lst, x, y, lx, ly):
-            draw_lst += [(x, y+y_bias) for y_bias in range(ly)]
-            draw_lst += [(x+lx, y+y_bias) for y_bias in range(ly)]
-            draw_lst += [(x+x_bias, y) for x_bias in range(lx)]
-            draw_lst += [(x+x_bias, y+ly) for x_bias in range(lx)]
-            return draw_lst
-
-        draw_point = []
-        draw_point = square_painter(draw_point, 0, 0, 55, 17)
-        for obj in self.layout_design:
-            draw_point = square_painter(draw_point,
-                                        int(obj[0][0]/Inches(13.33)*55),
-                                        int(obj[0][1]/Inches(7.5)*17),
-                                        int(obj[1][0]/Inches(13.33)*55),
-                                        int(obj[1][1]/Inches(7.5)*17))
-
-        for y_painter in range(0, 18):
-            drawer = ""
-            for x_painter in range(0, 56):
-                if (x_painter, y_painter) in draw_point:
-                    drawer += "#"
-                else:
-                    drawer += " "
-            print(drawer)
 
     # set the data container
     def _set_data_container(self, data_container):
@@ -164,13 +136,13 @@ class PrsLayoutDesigner:
             if len(obj_in_page) > 0:
                 for uid in obj_in_page:
                     obj = self._object_pool[uid]
-                    if obj.location is not None:
-                        location = obj.location
+                    if obj.position is not None:
+                        position = obj.position
                     else:
-                        location = (0, 0, 5, 5)
+                        position = (0, 0, 5, 5)
                     self._layout_design.add_object_on_slide(slide_page=page_id,
                                                             uid=uid,
-                                                            location=location)
+                                                            position=position)
 
     def custom_layout_scan(self):
         # BETA: allow for customized layout for charts, but require the user to provide fully defined layout
@@ -206,10 +178,10 @@ class LayoutDesignContainer:
                 if page_id not in self.page_object_stack:
                     self.page_object_stack[page_id] = {}
 
-    def add_object_on_slide(self, slide_page, uid, location):
+    def add_object_on_slide(self, slide_page, uid, position):
         if slide_page not in self.page_object_stack:
             self.add_slide_on_prs(slide_page)
-        self.page_object_stack[slide_page][uid] = location
+        self.page_object_stack[slide_page][uid] = position
 
-    def get_object_location(self, page_id, uid):
+    def get_object_position(self, page_id, uid):
         return self.page_object_stack[page_id][uid]
