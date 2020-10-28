@@ -131,6 +131,7 @@ class PrsLayoutDesigner:
         self._object_pool = prs_object_pool
         self._page_stack = page_stack
         self._layout_design = LayoutDesignContainer(self.prs_width, self.prs_height, max(page_stack))
+        self._uid_position_stack = {}
 
     def execute(self):
         for page_id in self._page_stack:
@@ -139,9 +140,10 @@ class PrsLayoutDesigner:
                 for uid in obj_in_page:
                     obj = self._object_pool[uid]
                     if obj.position is not None:
-                        position = obj.position
+                        position = self.position_transform(obj.position)
                     else:
                         position = (0, 0, 5, 5)
+                    self._uid_position_stack[uid] = position
                     self._layout_design.add_object_on_slide(slide_page=page_id,
                                                             uid=uid,
                                                             position=position)
@@ -154,6 +156,33 @@ class PrsLayoutDesigner:
 
     def layout_design_export(self):
         return self._layout_design
+
+    def position_transform(self, position_tuple: tuple):
+        position_rep = position_tuple[0]
+        if position_rep == 'a':
+            _, x, y, w, h = position_tuple
+            position = (x, y, w, h)
+
+        elif position_rep == 'rb':
+            _, x, y, w, h = position_tuple
+            x *= self.prs_width
+            w *= self.prs_width
+            y *= self.prs_height
+            h *= self.prs_height
+            position = (x, y, w, h)
+
+        elif position_rep == 'ro':
+            _, ref_uid, x, y, w, h = position_tuple
+            if ref_uid in self._uid_position_stack:
+                ref_x, _, ref_w, _ = self._uid_position_stack[ref_uid]
+            else:
+                raise ValueError(f"reference object {ref_uid} is not found")
+            position = (x + ref_x + ref_w, y, w, h)
+
+        else:
+            raise ValueError(f"unknown position representation {position_rep}")
+
+        return position
 
 
 class LayoutDesignContainer:

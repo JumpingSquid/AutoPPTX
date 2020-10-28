@@ -51,9 +51,13 @@ class PptxConstructor:
         assert (object_type == 'text') or (object_type == 'chart') or (object_type == 'table')
 
         if position is not None:
-            # assure the location is in the format of (x, y, w, h)
+            # three types of position representation:
+            # 1. absolute position ("a", x, y, w, h)
+            # 2. relative position to boundary ("rb", x%, y%, w%, h%)
+            # 3. relative position to object ("ro", uid, x, y, w, h)
+            # assure the location is in the format of three
             assert isinstance(position, tuple)
-            assert len(position) == 4
+            assert (position[0] == 'a') or (position[0] == 'rb') or (position[0] == 'ro')
 
         if slide_page is None:
             # if no slide_page is given, create a new slide directly
@@ -69,6 +73,7 @@ class PptxConstructor:
         ObjectContainer = namedtuple("obj", ['uid', 'data', "obj_type", "obj_format", "slide_page", 'position'])
         self.prs_object_pool[uid] = ObjectContainer(uid, data, object_type, object_format, slide_page, position)
         self.page_stack[slide_page].append(uid)
+        return uid
 
     def pptx_execute(self):
         layout_designer = pptx_layout.PrsLayoutDesigner(self.config, self.prs_object_pool, self.page_stack)
