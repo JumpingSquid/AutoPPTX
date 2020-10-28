@@ -42,8 +42,9 @@ class PrsLayoutManager:
         self.table_creator = TableCreator()
         self.chart_creator = ChartCreator()
 
-    def add_chart_on_slide(self, data, slide, chart_type, position):
-        slide = self.chart_creator.create_chart(data=data, slide=slide, chart_type=chart_type, position=position)
+    def add_chart_on_slide(self, data, slide, obj_format, position, uid):
+        slide = self.chart_creator.create_chart(data=data, slide=slide, obj_format=obj_format,
+                                                uid=uid, position=position)
         return slide
 
     def add_text_on_slide(self, data, slide, position):
@@ -89,8 +90,9 @@ class PrsLayoutManager:
                 position = self.layout_design_container.get_object_position(page_id, uid)
 
                 if object_type == 'chart':
-                    chart_type = self.object_stack[uid].obj_format['chart_type']
-                    slide = self.add_chart_on_slide(data=data, slide=slide, chart_type=chart_type, position=position)
+                    obj_format = self.object_stack[uid].obj_format
+                    slide = self.add_chart_on_slide(data=data, slide=slide, obj_format=obj_format, position=position,
+                                                    uid=uid)
         return None
 
     # set the data container

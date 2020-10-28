@@ -40,14 +40,11 @@ class ChartCreator:
         self.origin = (Inches(0), Inches(0))
         self.size = (Inches(13), Inches(6))
 
-        # create default chart format
-        self.chart_format_setter = ChartFormatSetter(chart_format)
-
     def add_chart(self, data, slide_id, chart_type, position=None):
-        chart_data = None
 
         if chart_type not in ["hist", "stackbar", "bar", "pie", "line", "stackcolumn"]:
-            raise ValueError(f"Unknow chart type: {chart_type} is given")
+            print(f"Unknow chart type: {chart_type} is given, will create bar chart directly")
+            chart_type = 'bar'
 
         if isinstance(data, pandas.DataFrame):
             chart_data = self.pandas_to_ppt_chart_data(data)
@@ -92,14 +89,20 @@ class ChartCreator:
         prs.slide_height = Inches(7.5)
         return prs
 
-    def create_chart(self, data, slide, chart_type, position=None):
-        # change into private method, only called by the add_chart
+    def create_chart(self, data, slide, obj_format, uid, position=None):
+        # called by the add_chart when data2chart is used as an independent module
+        # or called by the PrsLayoutManager
+
         # set the position of the chart
         if position is None:
             x, y = self.origin[0], self.origin[1]
             w, h = self.size[0], self.size[1]
         else:
             x, y, w, h = position
+
+        # analyze the format argument
+        chart_format_setter = ChartFormatSetter(obj_format)
+        chart_type = chart_format_setter.chart_format['chart_type']
 
         # add chart to slide
         chart_type_dict = {"hist": XL_CHART_TYPE.COLUMN_CLUSTERED,
@@ -115,11 +118,11 @@ class ChartCreator:
 
         # chart format setting
         if chart_type == "pie":
-            self.chart_format_setter.pie_chart_format(graphic_frame.chart)
+            chart_format_setter.pie_chart_format(graphic_frame.chart)
         elif chart_type == "line":
-            self.chart_format_setter.line_chart_format(graphic_frame.chart)
+            chart_format_setter.line_chart_format(graphic_frame.chart)
         else:
-            self.chart_format_setter.general_chart_format(graphic_frame.chart)
+            chart_format_setter.general_chart_format(graphic_frame.chart)
         return slide
 
 
@@ -263,6 +266,7 @@ class ChartFormatSetter:
 
     def chart_format_inference(self, predefined_chart_format=None):
         chart_format = {"chart_title": "",
+                        "chart_type": "bar",
                         "legend_bool": True,
                         "label_bool": True,
                         "chart_bool": True,
@@ -271,7 +275,14 @@ class ChartFormatSetter:
                         "label_font_size": Pt(9),
                         "chart_font_size": Pt(9),
                         "label_number_format": "0.0"}
+
         if predefined_chart_format is not None:
             for chart_format_key in predefined_chart_format:
                 chart_format[chart_format_key] = predefined_chart_format[chart_format_key]
+
+                if chart_format_key == 'font_size':
+                    chart_format['legend_font_size'] = predefined_chart_format[chart_format_key]
+                    chart_format['label_font_size'] = predefined_chart_format[chart_format_key]
+                    chart_format['chart_font_size'] = predefined_chart_format[chart_format_key]
+
         return chart_format

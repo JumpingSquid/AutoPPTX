@@ -41,12 +41,6 @@ class PptxConstructor:
         self.presentation.slide_width = config['prs_width']
         self.presentation.slide_height = config['prs_height']
 
-        self.data = None
-
-        self.layout_manager = None
-        self.layout_designer = None
-        self.data_processor = None
-
         self.prs_object_pool = {}
         self.page_stack = {0: []}
 
@@ -84,11 +78,11 @@ class PptxConstructor:
         data_processor = data_preprocessor.DataProcessor(self.prs_object_pool)
         data_container = data_processor.data_container_export()
 
-        self.layout_manager = pptx_layout.PrsLayoutManager(presentation=self.presentation,
-                                                           object_stack=self.prs_object_pool,
-                                                           layout_design_container=design_structure,
-                                                           data_container=data_container)
-        result = self.layout_manager.layout_execute()
+        layout_manager = pptx_layout.PrsLayoutManager(presentation=self.presentation,
+                                                      object_stack=self.prs_object_pool,
+                                                      layout_design_container=design_structure,
+                                                      data_container=data_container)
+        result = layout_manager.layout_execute()
         return result
 
     def pptx_save(self, filepath='C://Users/user/Desktop/untitled.pptx'):
