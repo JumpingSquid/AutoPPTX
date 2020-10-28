@@ -1,5 +1,5 @@
 # AutoPPTX
-AutoPPTX is a package based on python-pptx(https://python-pptx.readthedocs.io/en/latest/).  
+AutoPPTX is a wrapper based on python-pptx(https://python-pptx.readthedocs.io/en/latest/).  
 The package provides an API that allows user to create presentation with python-pptx more easily.
   
 ## I. Main functions
