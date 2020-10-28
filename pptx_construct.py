@@ -37,68 +37,68 @@ class PptxConstructor:
     def __init__(self, config):
         self.config = config
         self.presentation = Presentation()
-        self.presentation.slide_width = config['slide_width']
-        self.presentation.slide_height = config['slide_height']
+
+        self.presentation.slide_width = config['prs_width']
+        self.presentation.slide_height = config['prs_height']
 
         self.data = None
 
-        self.prs_object_pool = {"chart": {},
-                                "table": {},
-                                "text": {}}
-        self.page_stack = {}
+        self.layout_manager = None
+        self.layout_designer = None
+        self.data_processor = None
 
-    def _set_presentation_size(self, width, height):
-        self.presentation.slide_width = width
-        self.presentation.slide_height = height
-
-    def _set_config_datapath(self, path):
-        self.config["dataframe"] = path
-
-    def _presentation_reset(self):
-        self.presentation = Presentation()
-        self._set_presentation_size(Inches(13.33), Inches(7.5))
+        self.prs_object_pool = {}
+        self.page_stack = {0: []}
 
     def add_object(self, data, object_type: str,
                    object_format=None, slide_page=None, location=None):
 
+        # assure the object type is text, chart, or table
         assert (object_type == 'text') or (object_type == 'chart') or (object_type == 'table')
 
         if location is not None:
+            # assure the location is in the format of (x, y, w, h)
             assert isinstance(location, tuple)
             assert len(location) == 4
 
-        # TO-DO: In the future, uid is produced by a hashmap based on the object argument.
+        if slide_page is None:
+            # if no slide_page is given, create a new slide directly
+            # TODO: slide_page can be str or int
+            slide_page = max(self.page_stack) + 1
+            self.page_stack[slide_page] = []
+
+        # TODO: In the future, uid is produced by a hashmap based on the object argument.
         # If an object already exists, then the ObjectContainer can be reused to save space.
         # Currently do not apply this since no mechanism to handle duplicate objects with different location.
-        if len(self.prs_object_pool[object_type]) == 0:
-            uid = f"{object_type}_0"
-        else:
-            uid = f"{object_type}_{max(self.prs_object_pool[object_type].keys())}"
+        uid = f"{object_type}_{len(self.prs_object_pool)}"
 
         ObjectContainer = namedtuple("obj", ['uid', 'data', "obj_type", "obj_format", "slide_page", 'location'])
-        self.prs_object_pool[object_type][uid] = ObjectContainer(uid, data, object_type, object_format,
-                                                                 slide_page, location)
-        if len(self.page_stack[slide_page]) == 0:
-            self.page_stack[slide_page] = [uid]
-        else:
-            self.page_stack[slide_page].append(uid)
+        self.prs_object_pool[uid] = ObjectContainer(uid, data, object_type, object_format, slide_page, location)
+        self.page_stack[slide_page].append(uid)
 
     def pptx_execute(self):
-        layout_designer = pptx_layout.PrsLayoutDesigner(self.config, self.prs_object_pool)
+        layout_designer = pptx_layout.PrsLayoutDesigner(self.config, self.prs_object_pool, self.page_stack)
+        layout_designer.execute()
         design_structure = layout_designer.layout_design_export()
 
         data_processor = data_preprocessor.DataProcessor(self.prs_object_pool)
         data_container = data_processor.data_container_export()
 
-        layout_manager = pptx_layout.PrsLayoutManager(presentation=self.presentation,
-                                                      layout_design=design_structure,
-                                                      data_container=data_container)
-        result = layout_manager.layout_execute()
+        self.layout_manager = pptx_layout.PrsLayoutManager(presentation=self.presentation,
+                                                           object_stack=self.prs_object_pool,
+                                                           layout_design_container=design_structure,
+                                                           data_container=data_container)
+        result = self.layout_manager.layout_execute()
         return result
 
     def pptx_save(self, filepath='C://Users/user/Desktop/untitled.pptx'):
         self.presentation.save(filepath)
         print(f"INFO: presentation file is saved successfully as {filepath}")
 
+    def _set_presentation_size(self, width, height):
+        self.presentation.slide_width = width
+        self.presentation.slide_height = height
 
-
+    def _presentation_reset(self):
+        self.presentation = Presentation()
+        self._set_presentation_size(Inches(13.33), Inches(7.5))

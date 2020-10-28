@@ -24,16 +24,13 @@ import pandas
 class ChartCreator:
 
     def __init__(self,
-                 prs=None,
+                 prs=True,
                  chart_format=None
                  ):
 
-        if prs is None:
+        if prs:
             # initializing a basic presentation file when no existing file is given
             self.prs = self.create_prs()
-        else:
-            assert isinstance(Presentation, prs)
-            self.prs = prs
 
         self.slide_pool = {}
         bullet_slide_layout = self.prs.slide_layouts[6]
@@ -53,11 +50,11 @@ class ChartCreator:
             raise ValueError(f"Unknow chart type: {chart_type} is given")
 
         if isinstance(data, pandas.DataFrame):
-            chart_data = self.pandas_to_ppt_table(data)
+            chart_data = self.pandas_to_ppt_chart_data(data)
         else:
             raise TypeError("data type is not supported")
 
-        self._create_chart(chart_data, self.slide_pool[slide_id], chart_type, location)
+        self.create_chart(chart_data, self.slide_pool[slide_id], chart_type, location)
 
     def add_slide(self, slide_id, slide_type, overwrite=False):
         if slide_id in self.slide_pool:
@@ -75,7 +72,7 @@ class ChartCreator:
 
     @staticmethod
     # TODO: handled by data_preprocessor in the future
-    def pandas_to_ppt_table(dataframe):
+    def pandas_to_ppt_chart_data(dataframe):
         assert isinstance(dataframe, pandas.DataFrame)
 
         data = CategoryChartData()
@@ -95,14 +92,14 @@ class ChartCreator:
         prs.slide_height = Inches(7.5)
         return prs
 
-    def _create_chart(self, data, slide, chart_type, location=None):
+    def create_chart(self, data, slide, chart_type, location=None):
         # change into private method, only called by the add_chart
         # set the position of the chart
         if location is None:
             x, y = self.origin[0], self.origin[1]
-            cx, cy = self.size[0], self.size[1]
+            w, h = self.size[0], self.size[1]
         else:
-            x, y, cx, cy = location
+            x, y, w, h = location
 
         # add chart to slide
         chart_type_dict = {"hist": XL_CHART_TYPE.COLUMN_CLUSTERED,
@@ -113,7 +110,7 @@ class ChartCreator:
                            "line": XL_CHART_TYPE.LINE}
 
         graphic_frame = slide.shapes.add_chart(
-            chart_type_dict[chart_type], x, y, cx, cy, data
+            chart_type_dict[chart_type], x, y, w, h, data
         )
 
         # chart format setting
@@ -123,6 +120,7 @@ class ChartCreator:
             self.chart_format_setter.line_chart_format(graphic_frame.chart)
         else:
             self.chart_format_setter.general_chart_format(graphic_frame.chart)
+        return slide
 
 
 class ChartFormatSetter:
