@@ -20,8 +20,9 @@ chart_loc_2 = ("ro", uid1, Inches(0), Inches(0), Inches(6), Inches(6))
 constructor.add_object(data=df2, object_type='chart', position=chart_loc_2, slide_page=1,
                        object_format={"chart_type": "line", "font_size": Pt(20)})
 
-chart_loc_3 = ("rb", 0.2, 0.2, 0.5, 0.5)
-constructor.add_object(data=df3, object_type='chart', position=chart_loc_3)
+chart_loc_3 = ("rb", 0, 0, 1, 1)
+constructor.add_object(data=df3, object_type='chart', slide_page=10,
+                       position=chart_loc_3)
 
 constructor.pptx_execute()
 constructor.pptx_save()

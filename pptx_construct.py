@@ -61,7 +61,7 @@ class PptxConstructor:
 
         if slide_page is None:
             # if no slide_page is given, create a new slide directly
-            # TODO: slide_page can be str or int
+            # TODO: slide_page can be str or int, but if string how to determine choose the page number
             slide_page = max(self.page_stack) + 1
             self.page_stack[slide_page] = []
 
