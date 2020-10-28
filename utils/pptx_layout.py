@@ -25,8 +25,8 @@ class PrsLayoutManager:
         self.presentation = presentation
         self.prs_height = presentation.slide_height
         self.prs_width = presentation.slide_width
-        self.data_container = None
-        self.layout_design = None
+        self.data_container = {}
+        self.layout_design = {}
         self.table_creator = TableCreator()
 
         # read in the title config
@@ -66,7 +66,7 @@ class PrsLayoutManager:
         # store the object that exists on the slide
         self.object_pool = []
 
-    def slide_chart_layout(self, slide, chart_uid):
+    def slide_chart_layout(self, slide, chart_uid, location):
         # load the format of the chart
         chart_created_config = self.chart_config[chart_uid]
         if "format" not in chart_created_config:
@@ -74,13 +74,16 @@ class PrsLayoutManager:
 
         print("INFO: chart type", chart_created_config["type"], "require only 1 chart, full space will be used")
         chartcreator = data2chart.ChartCreator(chart_format=chart_created_config["format"])
-        chartcreator.add_chart(slide, chart_type=chart_created_config["type"])
+        chartcreator.add_chart(data=self.data_container[chart_uid],
+                               slide_id=slide,
+                               chart_type=chart_created_config["type"],
+                               location=location)
         return slide
 
     def add_chart_on_slide(self, slide, chart_uid, location):
         # try to create chart, if there is ZeroDivisionError for creating chart data, skip the chart first
         # otherwise stop the task
-        self.slide_chart_layout(slide, chart_uid)
+        self.slide_chart_layout(slide, chart_uid, location)
         self.chart_rescale = self.chart_config[self._chart_id]["rescale"]
         print(self._chart_id, "chart is added")
         return slide
@@ -94,7 +97,7 @@ class PrsLayoutManager:
         p = text_frame.paragraphs[0]
 
         # text box content is determined here
-        p.text = self.title_config
+        p.text = self.layout_design[text_uid]
         p.alignment = PP_PARAGRAPH_ALIGNMENT.LEFT
         p.font.name = textbox("title_font")
         p.font.size = Pt(40)
@@ -104,17 +107,12 @@ class PrsLayoutManager:
     def add_table_on_slide(self, slide, table_uid, location):
         # the position of the comment
         # location should be the arguments!
-        left = self.table_creator.origin[0]
-        top = self.table_creator.origin[1]
-        width = self.table_creator.width
-        height = self.table_creator.height
-        row_num = self.table_creator.row_num
-        col_num = self.table_creator.col_num
-        table = slide.shapes.add_table(row_num, col_num, left, top, width, height).table
+        x, y, w, h = location
+        row_num = self.data_container[table_uid].row_num
+        col_num = self.data_container[table_uid].col_num
+        table = slide.shapes.add_table(row_num, col_num, x, y, w, h).table
         self.table_creator.table_data_fill(table)
         return slide
-
-    # create a warning tag on the chart where the sample size is below 15
 
     # draw the layout design on the screen, assist checking the number and the location of object created
     def layout_describe(self):
