@@ -7,13 +7,14 @@ Since the purpose of AutoPPTX is to minimize the effort to utilize python-pptx, 
 to manipulate the entire presentation file. The API provides three ways to produce a presentation file:   
 (1) Data2Chart: a specific module to create slides with only charts  
 (2) Data2Table: a specific module to create slides with only tables  
-(3) PPTX_Construct: a module with more flexibility that is designed to produce a presentation file with
+(3) Data2Text: a specific module to create slides with only text box  
+(4) PPTX_Construct: a module with more flexibility that is designed to produce a presentation file with
 standard structure and layout (typically a weekly or daily report with fixed layout but varied data source).  
 
 
 ## II. Other tools
 Besides, two tools that may be useful for some scenarios will be available in the future:  
-(1) chart data preprocessor: handle multiple types of data (e.g. pandas Dataframe or Series),
+(1) data preprocessor: handle multiple types of data (e.g. pandas Dataframe or Series),
  transform them into proper format for adding charts or others.  
 (2) layout scanner:  scan the existing presentation file, and analyze the layout and structure so the user
 can manipulate the data source of each chart or table while retaining the original presentation structure.  
