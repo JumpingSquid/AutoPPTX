@@ -4,7 +4,7 @@ The steps are described as follows:
 (1) Specifying the layout of the presentation file (width, height,...)
 
 (2) Adding object by using add_object() method:
-    add_object(data, object_type, obejct_format, slide_page, location)
+    add_object(data, object_type, object_format, slide_page, location)
     data: str or pandas dataframe
     object_type: "text", "chart", "table"
     object_format: format for above type
@@ -26,30 +26,26 @@ import data2table
 
 from pptx import Presentation
 from pptx.util import Inches
-from utils import pptx_layout
+from utils import pptx_layout, pptx_auditor
 from preprocessing import data_preprocessor
+
+from collections import namedtuple
 
 
 class PptxConstructor:
 
-    def __init__(self):
-        self.config = {"dataframe": None,
-                       "slide": []}
+    def __init__(self, config):
+        self.config = config
         self.presentation = Presentation()
-        self.presentation.slide_width = Inches(13.33)
-        self.presentation.slide_height = Inches(7.5)
-        self.data = None
-        self.page_record = []
+        self.presentation.slide_width = config['slide_width']
+        self.presentation.slide_height = config['slide_height']
 
-    def _data_read(self):
-        if self.config["dataframe"][-3:] == "csv":
-            self.data = pd.read_csv(self.config["dataframe"])
-            print(self.config["dataframe"], "is read")
-        elif self.config["dataframe"][-4:] == "xlsx":
-            self.data = pd.read_excel(self.config["dataframe"])
-            print(self.config["dataframe"], "is read")
-        else:
-            raise ValueError("Only support csv or xlsx file, please check data input format")
+        self.data = None
+
+        self.prs_object_pool = {"chart": {},
+                                "table": {},
+                                "text": {}}
+        self.page_stack = {}
 
     def _set_presentation_size(self, width, height):
         self.presentation.slide_width = width
@@ -58,139 +54,51 @@ class PptxConstructor:
     def _set_config_datapath(self, path):
         self.config["dataframe"] = path
 
-    def set_datapath(self, data):
-        self.data = data
-
-    def presentation_reset(self):
+    def _presentation_reset(self):
         self.presentation = Presentation()
-        self.presentation.slide_width = Inches(13.33)
-        self.presentation.slide_height = Inches(7.5)
+        self._set_presentation_size(Inches(13.33), Inches(7.5))
 
-    def slide_config_append(self, slide_config):
-        if slide_config["page"] in self.page_record:
-            print("WARN: Duplicate page number found, change the page number to be after the existing page")
-            slide_config["page"] += 1
-            new_page = slide_config["page"]
-            self.page_record.append(new_page)
-            self.page_record.sort()
-            self.page_record = [page_id+1 for page_id in self.page_record if page_id > (new_page-1)]
+    def add_object(self, data, object_type: str,
+                   object_format=None, slide_page=None, location=None):
+
+        assert (object_type == 'text') or (object_type == 'chart') or (object_type == 'table')
+
+        if location is not None:
+            assert isinstance(location, tuple)
+            assert len(location) == 4
+
+        # TO-DO: In the future, uid is produced by a hashmap based on the object argument.
+        # If an object already exists, then the ObjectContainer can be reused to save space.
+        # Currently do not apply this since no mechanism to handle duplicate objects with different location.
+        if len(self.prs_object_pool[object_type]) == 0:
+            uid = f"{object_type}_0"
         else:
-            print("INFO: page", slide_config["page"], "is added")
-            new_page = slide_config["page"]
-            self.page_record.append(new_page)
-            self.page_record.sort()
-        self.config["slide"].append(slide_config)
+            uid = f"{object_type}_{max(self.prs_object_pool[object_type].keys())}"
 
-    def slide_config_create(self, page=None):
-
-        if page is None:
-            page = max(self.page_record) + 1
-
-        slide_config = {
-                        "page": page,
-                        "title": None,
-                        "chart": [],
-                        "table": [],
-                        "comment": None,
-                        "setting": {"chart_id_specifed": False}
-                        }
-
-        return slide_config
-
-    @staticmethod
-    def chart_config_create(category_col,
-                            type,
-                            id=None,
-                            value_col=None,
-                            fillna="4",
-                            agg="count",
-                            label_number_format="0.0",
-                            rescale=[1, 1],
-                            pos_indicator=None,
-                            ignorena=None,
-                            category_freq_rank=None,
-                            colormap=None,
-                            appendix=None,
-                            addtotal=False,
-                            charttitle=None
-                            ):
-
-        chart_config = {
-            "id": id,
-            "cat_columns": category_col,
-            "type": type,
-            "fillna": fillna,
-            "val_arg": {'agg': agg,
-                        "category_freq_rank": category_freq_rank,
-                        "pos_indicator": pos_indicator,
-                        "ignorena": ignorena,
-                        "addtotal": addtotal
-                        },
-            "format": {"label_number_format": label_number_format,
-                       "colormap": colormap,
-                       "chart_title": charttitle
-                       },
-            "appendix": appendix,
-            "rescale": rescale
-        }
-
-        if value_col is not None:
-            chart_config["val_columns"] = value_col
-
-        return chart_config
-
-    @staticmethod
-    def comment_config_create(comment_type, cat_col=None, col_alias=None, pos_indicator=None, val_col=None):
-        comment_config = {"cat_col": cat_col,
-                          "col_alias": col_alias,
-                          "comment_type": comment_type,
-                          "pos_indicator": pos_indicator,
-                          "val_col": val_col}
-        return comment_config
-
-    @staticmethod
-    def table_config_create():
-        comment_config = {}
-        return comment_config
-
-    def pptx_save(self, path='C://Users/user/Desktop/untitled.pptx'):
-        self.presentation.save(path)
-        print("INFO: presentation file is saved successfully as", path)
+        ObjectContainer = namedtuple("obj", ['uid', 'data', "obj_type", "obj_format", "slide_page", 'location'])
+        self.prs_object_pool[object_type][uid] = ObjectContainer(uid, data, object_type, object_format,
+                                                                 slide_page, location)
+        if len(self.page_stack[slide_page]) == 0:
+            self.page_stack[slide_page] = [uid]
+        else:
+            self.page_stack[slide_page].append(uid)
 
     def pptx_execute(self):
-        if self.data is None:
-            self._data_read()
+        layout_designer = pptx_layout.PrsLayoutDesigner(self.config, self.prs_object_pool)
+        design_structure = layout_designer.layout_design_export()
 
-        # to achieve queue
-        self.config["slide"].reverse()
+        data_processor = data_preprocessor.DataProcessor(self.prs_object_pool)
+        data_container = data_processor.data_container_export()
 
-        # produce slide which queued in the slide pool
-        while len(self.config["slide"]) > 0:
-            slide_config = self.config["slide"].pop()
-            print("INFO: slide " + str(slide_config["page"]) + " is processed")
+        layout_manager = pptx_layout.PrsLayoutManager(presentation=self.presentation,
+                                                      layout_design=design_structure,
+                                                      data_container=data_container)
+        result = layout_manager.layout_execute()
+        return result
 
-            # call the prslayoutmanager to arrange the position of the elements in a slide
-            prslayoutmanager = pptx_layout.PrsLayoutManager(self.presentation, slide_config)
-
-            # create title if needed
-            if slide_config["title"] is not None:
-                self.presentation = prslayoutmanager.add_title_on_slide()
-
-            # create chart
-            if len(slide_config["chart"]) > 0:
-                for chart_created_config in slide_config["chart"]:
-                    chart_data_processor = data_preprocessor.ChartDataProcessor(self.data, chart_created_config)
-                    prslayoutmanager.read_dataprocessor(chart_data_processor)
-                    self.presentation = prslayoutmanager.add_chart_on_slide()
-
-            # create table
-            if len(slide_config["table"]) > 0:
-                for table_config in slide_config["table"]:
-                    tablecreator = data2table.TableCreator(table_config)
-                    self.presentation = prslayoutmanager.add_table_on_slide(tablecreator)
-
-            # draw the look of the layout produced
-            prslayoutmanager.layout_describe()
+    def pptx_save(self, filepath='C://Users/user/Desktop/untitled.pptx'):
+        self.presentation.save(filepath)
+        print(f"INFO: presentation file is saved successfully as {filepath}")
 
 
 

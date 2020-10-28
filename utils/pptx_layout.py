@@ -104,6 +104,9 @@ class PrsLayoutManager:
         self.table_creator.table_data_fill(table)
         return slide
 
+    def layout_execute(self):
+        return None
+
     # draw the layout design on the screen, assist checking the number and the location of object created
     def layout_describe(self):
 

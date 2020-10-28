@@ -6,8 +6,18 @@ from pptx.chart.data import CategoryChartData
 
 class DataProcessor:
 
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, prs_object_pool):
+        self.prs_object_pool = prs_object_pool
+        self.data_container = DataContainer()
+
+    def _data_preprocess_execute(self):
+        for obj_container in self.prs_object_pool:
+            uid = obj_container.uid
+            data = obj_container.data
+            self.data_container.add_data(uid, data)
+
+    def data_container_export(self):
+        return self.data_container
 
     @staticmethod
     def pandas_to_ppt_table(dataframe):
@@ -26,4 +36,7 @@ class DataProcessor:
 class DataContainer:
 
     def __init__(self):
-        self.data = None
+        self.data = {}
+
+    def add_data(self, uid, data):
+        self.data[uid] = data
