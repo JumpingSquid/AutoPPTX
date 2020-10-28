@@ -40,12 +40,12 @@ can manipulate the data source of each chart or table while retaining the origin
                                   object_format={"chart_type": "bar", 'colormap': color_map('sunshine')})
     
     # relative position to boundary
-    loc_2 = ("ro", uid1, Inches(0), Inches(0), Inches(6), Inches(6))
+    loc_2 = ("rb", 0, 0, 1, 1)
     constructor.add_object(data=df2, object_type='chart', position=loc_2, slide_page=1,
                            object_format={"chart_type": "line", "font_size": Pt(20)})
     
     # relative position to other object(given uid)
-    loc_3 = ("rb", 0, 0, 1, 1)
+    loc_3 = ("ro", uid1, Inches(0), Inches(0), Inches(6), Inches(6))
     constructor.add_object(data=df3, object_type='chart', slide_page=10,
                            position=loc_3)
     constructor.pptx_execute()
