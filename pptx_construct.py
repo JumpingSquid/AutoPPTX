@@ -1,10 +1,33 @@
+"""
+PptxConstructor is the user interface to create the presentation file.
+The steps are described as follows:
+(1) Specifying the layout of the presentation file (width, height,...)
+
+(2) Adding object by using add_object() method:
+    add_object(data, object_type, obejct_format, slide_page, location)
+    data: str or pandas dataframe
+    object_type: "text", "chart", "table"
+    object_format: format for above type
+    slide_page: int or None; if None, create a new slide at the end
+    location: (x, y, w, h) or None; if None, handled by the PrsLayoutDesigner
+
+(3) call execute() to create the presentation
+(4) DataProcessor will transform the data based on corresponding object type, and packaged all data into data_container
+(5) PrsLayoutDesigner provides layout_design_container
+(6) layout_design_container and data_container are passed to PrsLayoutManager
+(7) PrsLayoutManager will call data2chart, data2table, data2text to create the object, using data from data_container,
+     and put the object at the location
+(8) Optional: Auditor will check each object and issue warning if necessary (e.g. insufficient sample size)
+(9) call save() to save the presentation file
+"""
+
 import pandas as pd
 import data2table
 
 from pptx import Presentation
 from pptx.util import Inches
 from utils import pptx_layout
-from preprocessing import chart_data_preprocessor
+from preprocessing import data_preprocessor
 
 
 class PptxConstructor:
@@ -156,7 +179,7 @@ class PptxConstructor:
             # create chart
             if len(slide_config["chart"]) > 0:
                 for chart_created_config in slide_config["chart"]:
-                    chart_data_processor = chart_data_preprocessor.ChartDataProcessor(self.data, chart_created_config)
+                    chart_data_processor = data_preprocessor.ChartDataProcessor(self.data, chart_created_config)
                     prslayoutmanager.read_dataprocessor(chart_data_processor)
                     self.presentation = prslayoutmanager.add_chart_on_slide()
 

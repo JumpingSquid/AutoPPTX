@@ -139,7 +139,7 @@ class PrsLayoutManager:
 
 class PrsLayoutDesigner:
     """
-    PrsLayoutDesigner is only responsible for arranging the location of each object,
+    PrsLayoutDesigner is only responsible for arranging the location of each prs_object,
      and determine the size of each object.
     It does not consider the type or data source of each object.
 
@@ -153,11 +153,11 @@ class PrsLayoutDesigner:
     After calculating all the location and size, the information will be stored in the object: LayoutDesignContainer.
     Then LayoutDesignContainer will be passed to PrsLayoutManager to build the final presentation file.
     """
-    def __init__(self, config):
+    def __init__(self, prs_config, prs_object_pool):
         self.data = None
 
-        self.prs_width = config['prs_width']
-        self.prs_height = config['prs_height']
+        self.prs_width = prs_config['prs_width']
+        self.prs_height = prs_config['prs_height']
 
         self.chart_num_on_slide = None
         self.custom_layout_flag = False
@@ -165,6 +165,7 @@ class PrsLayoutDesigner:
         self.chart_box_size = [self.prs_width / max(3, self.custom_layout_flag),
                                self.prs_height * 0.7]
 
+        self._object_pool = prs_object_pool
         self._layout_design = LayoutDesignContainer()
 
     def custom_layout_scan(self):
