@@ -12,6 +12,7 @@ provide a json format file to the manger, specifying the location of each uid
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.enum.lang import MSO_LANGUAGE_ID
+from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.util import Inches, Pt
 
 import data2chart
@@ -21,12 +22,13 @@ from utils.pptx_params import textbox
 
 class PrsLayoutManager:
 
-    def __init__(self, presentation):
+    def __init__(self, presentation, layout_design, data_container):
         self.presentation = presentation
-        self.prs_height = presentation.slide_height
-        self.prs_width = presentation.slide_width
-        self.data_container = {}
-        self.layout_design = {}
+        self.data_container = data_container
+        self.layout_design = layout_design
+
+        self.prs_height = self.layout_design.slide_height
+        self.prs_width = self.layout_design.slide_width
         self.table_creator = TableCreator()
 
         # read in the title config
@@ -76,8 +78,11 @@ class PrsLayoutManager:
     def add_text_on_slide(self, slide, text_uid, location):
         # create text box
         shapes = slide.shapes
-        title_shape = shapes.title
-        text_frame = title_shape.text_frame
+        x, y, w, h = location
+        shape = shapes.add_shape(
+            MSO_SHAPE_TYPE.RECTANGLE, x, y, w, h
+        )
+        text_frame = shape.text_frame
         text_frame.clear()
         p = text_frame.paragraphs[0]
 
@@ -135,7 +140,6 @@ class PrsLayoutManager:
 class PrsLayoutDesigner:
     def __init__(self, config):
         self.data = None
-        self.layout_design = {}
 
         self.prs_width = config['prs_width']
         self.prs_height = config['prs_height']
@@ -146,12 +150,23 @@ class PrsLayoutDesigner:
         self.chart_box_size = [self.prs_width / max(3, self.custom_layout_flag),
                                self.prs_height * 0.7]
 
-    def layout_scan(self):
+        self._layout_design = LayoutDesignContainer()
+
+    def custom_layout_scan(self):
         # beta: allow for customized layout for charts, but require the user to provide fully defined layout
         # the user should provide a list contains (1) origin and (2) the box size for each chart
+        # maybe move to an independent module if the analysis is too complicated
         self.custom_layout_flag = True
 
-
     def layout_design_export(self):
-        return self.layout_design
+        return self._layout_design
 
+
+class LayoutDesignContainer:
+    def __init__(self):
+        self._prs_width = Inches(13)
+        self._prs_height = Inches(6)
+
+    def set_presentation_size(self, w, h):
+        self._prs_width = w
+        self._prs_height = h
