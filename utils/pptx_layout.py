@@ -48,21 +48,6 @@ class PrsLayoutManager:
             self.chart_rescale = self.chart_config[self._chart_id]["rescale"]
             self.chart_num_on_slide = len(self.chart_config)
 
-        # beta: allow for customized layout for charts, but require the user to provide fully defined layout
-        # the user should provide a list contains (1) origin and (2) the box size for each chart
-        if "custom_layout" not in self.layout_design:
-            self.custom_layout_flag = False
-            self.chart_origin_anchor = [Inches(0), Inches(1.65)]
-            print("INFO: ", self.chart_num_on_slide, "chart(s) required")
-            self.chart_box_size = [self.prs_width / max(3, self.chart_num_on_slide) * self.chart_rescale[0],
-                                   self.prs_height * 0.7 * self.chart_rescale[1]]
-        elif "custom_layout" in self.layout_design:
-            self.custom_layout_flag = True
-            self.custom_layout_config = self.layout_design["custom_layout"]
-            self.chart_origin_anchor = self.layout_design["custom_layout"]["origin"][self._chart_id]
-            print("INFO: ", "Self-defined layout is used")
-            self.chart_box_size = self.layout_design["custom_layout"]["size"][self._chart_id]
-
         # store the object that exists on the slide
         self.object_pool = []
 
@@ -148,5 +133,25 @@ class PrsLayoutManager:
 
 
 class PrsLayoutDesigner:
-    def __init__(self):
+    def __init__(self, config):
         self.data = None
+        self.layout_design = {}
+
+        self.prs_width = config['prs_width']
+        self.prs_height = config['prs_height']
+
+        self.chart_num_on_slide = None
+        self.custom_layout_flag = False
+        self.chart_origin_anchor = [Inches(0), Inches(1.65)]
+        self.chart_box_size = [self.prs_width / max(3, self.custom_layout_flag),
+                               self.prs_height * 0.7]
+
+    def layout_scan(self):
+        # beta: allow for customized layout for charts, but require the user to provide fully defined layout
+        # the user should provide a list contains (1) origin and (2) the box size for each chart
+        self.custom_layout_flag = True
+
+
+    def layout_design_export(self):
+        return self.layout_design
+
