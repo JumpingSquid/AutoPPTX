@@ -54,14 +54,11 @@ class PrsLayoutManager:
                                              position=position, uid=uid)
         return slide
 
-    def add_table_on_slide(self, data, slide, table_uid, position):
+    def add_table_on_slide(self, data, slide, obj_format, position, uid):
         # the position of the comment
         # location should be the arguments!
-        x, y, w, h = position
-        row_num = self.data_container[table_uid].row_num
-        col_num = self.data_container[table_uid].col_num
-        table = slide.shapes.add_table(row_num, col_num, x, y, w, h).table
-        self.table_creator.table_data_fill(data, table)
+        self.table_creator.create_table(data=data, slide=slide, obj_format=obj_format, position=position,
+                                        uid=uid)
         return slide
 
     def layout_execute(self):
