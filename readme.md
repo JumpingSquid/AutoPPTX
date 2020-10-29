@@ -33,7 +33,7 @@ standard structure and layout (typically a weekly or daily report with fixed lay
                                   object_format={"chart_type": "bar", 'colormap': color_map('sunshine')})
     
     # relative position to boundary
-    loc_2 = ("rb", 0, 0, 1, 1)
+    loc_2 = ("rb", 0.2, 0.2, 0.5, 0.5)
     constructor.add_object(data=df2, object_type='chart', position=loc_2, slide_page=1,
                            object_format={"chart_type": "line", "font_size": Pt(20)})
     

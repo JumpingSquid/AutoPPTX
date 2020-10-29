@@ -165,6 +165,7 @@ class PrsLayoutDesigner:
 
         elif position_rep == 'rb':
             _, x, y, w, h = position_tuple
+            assert (0 <= x <= 1) and (0 <= y <= 1) and (0 <= w <= 1) and (0 <= h <= 1)
             x *= self.prs_width
             w *= self.prs_width
             y *= self.prs_height
