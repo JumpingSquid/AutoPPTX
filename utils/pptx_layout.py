@@ -17,7 +17,8 @@ from pptx.util import Inches, Pt
 
 from data2chart import ChartCreator
 from data2table import TableCreator
-from utils.pptx_params import textbox
+from data2text import TextCreator
+
 
 
 class PrsLayoutManager:
@@ -41,29 +42,16 @@ class PrsLayoutManager:
 
         self.table_creator = TableCreator()
         self.chart_creator = ChartCreator()
+        self.text_creator = TextCreator()
 
     def add_chart_on_slide(self, data, slide, obj_format, position, uid):
         slide = self.chart_creator.create_chart(data=data, slide=slide, obj_format=obj_format,
                                                 uid=uid, position=position)
         return slide
 
-    def add_text_on_slide(self, data, slide, position):
-        # create text box
-        shapes = slide.shapes
-        x, y, w, h = position
-        shape = shapes.add_shape(
-            MSO_SHAPE_TYPE.RECTANGLE, x, y, w, h
-        )
-        text_frame = shape.text_frame
-        text_frame.clear()
-        p = text_frame.paragraphs[0]
-
-        # text box content is determined here
-        p.text = data
-        p.alignment = PP_PARAGRAPH_ALIGNMENT.LEFT
-        p.font.name = textbox("title_font")
-        p.font.size = Pt(40)
-        p.font.language_id = MSO_LANGUAGE_ID.TRADITIONAL_CHINESE
+    def add_text_on_slide(self, data, slide, obj_format, position, uid):
+        slide = self.text_creator.creat_text(data=data, slide=slide, obj_format=obj_format,
+                                             position=position, uid=uid)
         return slide
 
     def add_table_on_slide(self, data, slide, table_uid, position):
@@ -93,6 +81,11 @@ class PrsLayoutManager:
                     obj_format = self.object_stack[uid].obj_format
                     slide = self.add_chart_on_slide(data=data, slide=slide, obj_format=obj_format, position=position,
                                                     uid=uid)
+                elif object_type == 'text':
+                    obj_format = self.object_stack[uid].obj_format
+                    slide = self.add_text_on_slide(data=data, slide=slide, obj_format=obj_format, position=position,
+                                                   uid=uid)
+
         return None
 
     # set the data container
@@ -172,13 +165,25 @@ class PrsLayoutDesigner:
             h *= self.prs_height
             position = (x, y, w, h)
 
-        elif position_rep == 'ro':
+        elif position_rep in ['rr', "rl", "ru", "rd"]:
             _, ref_uid, x, y, w, h = position_tuple
             if ref_uid in self._uid_position_stack:
-                ref_x, _, ref_w, _ = self._uid_position_stack[ref_uid]
+                ref_x, ref_y, ref_w, ref_h = self._uid_position_stack[ref_uid]
             else:
                 raise ValueError(f"reference object {ref_uid} is not found")
-            position = (x + ref_x + ref_w, y, w, h)
+
+            # four relative position representation to objects
+            # rr for right bound, rl for left, ru for upper, rd for bottom
+            if position_rep == 'rr':
+                position = (min(x + ref_x + ref_w, self.prs_width), ref_y, w, h)
+            elif position_rep == 'rl':
+                position = (max(ref_x - x, 0), ref_y, w, h)
+            elif position_rep == 'ru':
+                position = (ref_x, max(ref_y - y, 0), w, h)
+            elif position_rep == 'rd':
+                position = (ref_x, min(y + ref_y + ref_h, self.prs_height), w, h)
+            else:
+                raise ValueError(f"unknown position representation {position_rep}")
 
         else:
             raise ValueError(f"unknown position representation {position_rep}")

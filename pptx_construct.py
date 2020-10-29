@@ -54,15 +54,18 @@ class PptxConstructor:
             # three types of position representation:
             # 1. absolute position ("a", x, y, w, h)
             # 2. relative position to boundary ("rb", x%, y%, w%, h%)
-            # 3. relative position to object ("ro", uid, x, y, w, h)
+            # 3. relative position to object ("rr/rl/ru/rd", uid, x, y, w, h)
             # assure the location is in the format of three
             assert isinstance(position, tuple)
-            assert (position[0] == 'a') or (position[0] == 'rb') or (position[0] == 'ro')
+            assert position[0] in ['a', 'rb', 'rr', 'ru', 'rl', 'rd']
 
         if slide_page is None:
             # if no slide_page is given, create a new slide directly
             # TODO: slide_page can be str or int, but if string how to determine choose the page number
             slide_page = max(self.page_stack) + 1
+            self.page_stack[slide_page] = []
+
+        if slide_page not in self.page_stack:
             self.page_stack[slide_page] = []
 
         # TODO: In the future, uid is produced by a hashmap based on the object argument.
