@@ -9,6 +9,11 @@ def color_map(index):
     return color_map_dict[index]
 
 
+def color(r, g, b):
+    from pptx.dml.color import RGBColor
+    return RGBColor(r, g, b)
+
+
 def textbox(key):
     text_dict = {
         "title_font": "微軟正黑體",
