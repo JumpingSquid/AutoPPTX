@@ -4,17 +4,15 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches, Pt
 
+from base import DataCreator
 from utils.pptx_params import textbox
 
 import pandas as pd
 
 
-class TextCreator:
+class TextCreator(DataCreator):
     def __init__(self):
-        self.alignment = {"left": PP_PARAGRAPH_ALIGNMENT.LEFT,
-                          "right": PP_PARAGRAPH_ALIGNMENT.RIGHT,
-                          "center": PP_PARAGRAPH_ALIGNMENT.CENTER}
-        self.text_lang = {"tc": MSO_LANGUAGE_ID.TRADITIONAL_CHINESE}
+        super(DataCreator, self).__init__()
 
     def creat_text(self, uid, data, slide, obj_format, position):
         # create text box

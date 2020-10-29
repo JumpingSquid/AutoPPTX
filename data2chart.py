@@ -17,17 +17,14 @@ from pptx.enum.chart import XL_LEGEND_POSITION, XL_DATA_LABEL_POSITION
 from pptx.util import Pt
 from pptx import Presentation
 from pptx.util import Inches
-
+from base import DataCreator
 import pandas
 
 
-class ChartCreator:
+class ChartCreator(DataCreator):
 
-    def __init__(self,
-                 prs=True,
-                 chart_format=None
-                 ):
-
+    def __init__(self, prs=True):
+        super(DataCreator, self).__init__()
         if prs:
             # initializing a basic presentation file when no existing file is given
             self.prs = self.create_prs()
