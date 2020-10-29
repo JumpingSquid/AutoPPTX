@@ -5,10 +5,10 @@ The package provides an API that allows user to create presentation with python-
 ## I. Modules
 Since the purpose of AutoPPTX is to minimize the effort to utilize python-pptx, it reduces the flexibility
 to manipulate the entire presentation file. The API provides three ways to produce a presentation file:   
-*PPTX_Construct: a module with more flexibility that is designed to produce a presentation file with
-*Data2Chart: a specific module to create slides with only charts  
-*Data2Table: a specific module to create slides with only tables  
-*Data2Text: a specific module to create slides with only text box  
+* PPTX_Construct: a module with more flexibility that is designed to produce a presentation file with  
+* Data2Chart: a specific module to create slides with only charts  
+* Data2Table: a specific module to create slides with only tables  
+* Data2Text: a specific module to create slides with only text box  
 standard structure and layout (typically a weekly or daily report with fixed layout but varied data source).  
  
 ## II. Example 
