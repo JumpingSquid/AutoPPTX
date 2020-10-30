@@ -1,14 +1,14 @@
 import pandas as pd
 
-from base import DataCreator
+from base import ObjectWorker
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.enum.lang import MSO_LANGUAGE_ID
 
 
-class TableCreator(DataCreator):
+class TableWorker(ObjectWorker):
     def __init__(self, prs=False):
-        super(DataCreator, self).__init__(prs)
+        super(ObjectWorker, self).__init__(prs)
 
     def create_table(self, data, slide, obj_format, position, uid):
         x, y, w, h = position

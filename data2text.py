@@ -4,15 +4,15 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches, Pt
 
-from base import DataCreator
+from base import ObjectWorker
 from utils.pptx_params import textbox
 
 import pandas as pd
 
 
-class TextCreator(DataCreator):
+class TextWorker(ObjectWorker):
     def __init__(self, prs=False):
-        super(DataCreator, self).__init__(prs)
+        super(ObjectWorker, self).__init__(prs)
 
     def creat_text(self, uid, data, slide, obj_format, position):
         # create text box

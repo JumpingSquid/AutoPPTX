@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from data2chart import ChartCreator, ChartFormatSetter
+from data2chart import ChartWorker, ChartFormatSetter
 from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
@@ -13,7 +13,7 @@ from pptx.util import Inches
 
 class TestChart(unittest.TestCase):
     def setUp(self) -> None:
-        self.chart_creator = ChartCreator()
+        self.chart_creator = ChartWorker()
 
 
 class Testinit(TestChart):

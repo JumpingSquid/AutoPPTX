@@ -15,9 +15,9 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx.util import Inches, Pt
 
-from data2chart import ChartCreator
-from data2table import TableCreator
-from data2text import TextCreator
+from data2chart import ChartWorker
+from data2table import TableWorker
+from data2text import TextWorker
 
 
 class PrsLayoutManager:
@@ -39,9 +39,9 @@ class PrsLayoutManager:
         self.prs_height = self.layout_design_container.prs_height
         self.prs_width = self.layout_design_container.prs_width
 
-        self.table_creator = TableCreator()
-        self.chart_creator = ChartCreator()
-        self.text_creator = TextCreator()
+        self.table_creator = TableWorker()
+        self.chart_creator = ChartWorker()
+        self.text_creator = TextWorker()
 
     def add_chart_on_slide(self, data, slide, obj_format, position, uid):
         slide = self.chart_creator.create_chart(data=data, slide=slide, obj_format=obj_format,

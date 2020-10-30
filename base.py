@@ -4,7 +4,7 @@ from pptx import Presentation
 from pptx.util import Inches
 
 
-class DataCreator:
+class ObjectWorker:
 
     def __init__(self, prs):
         self.uid_pool = []
