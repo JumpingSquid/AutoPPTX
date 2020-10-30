@@ -64,28 +64,6 @@ class ChartCreator(DataCreator):
         except Exception:
             return -1
 
-    @staticmethod
-    # TODO: handled by data_preprocessor in the future
-    def pandas_to_ppt_chart_data(dataframe):
-        assert isinstance(dataframe, pandas.DataFrame)
-
-        data = CategoryChartData()
-        col_lst = dataframe.columns.to_list()
-        data.categories = col_lst
-
-        for i, r in dataframe.iterrows():
-            data.add_series(i, tuple([r[col] for col in col_lst]))
-
-        return data
-
-    @staticmethod
-    def create_prs() -> Presentation():
-        prs = Presentation()
-        # slide size: 16:9
-        prs.slide_width = Inches(13.33)
-        prs.slide_height = Inches(7.5)
-        return prs
-
     def create_chart(self, data, slide, obj_format, uid, position=None):
         # called by the add_chart when data2chart is used as an independent module
         # or called by the PrsLayoutManager
@@ -125,6 +103,28 @@ class ChartCreator(DataCreator):
         self.uid_pool.append(uid)
 
         return slide
+
+    @staticmethod
+    # TODO: handled by data_preprocessor in the future
+    def pandas_to_ppt_chart_data(dataframe):
+        assert isinstance(dataframe, pandas.DataFrame)
+
+        data = CategoryChartData()
+        col_lst = dataframe.columns.to_list()
+        data.categories = col_lst
+
+        for i, r in dataframe.iterrows():
+            data.add_series(i, tuple([r[col] for col in col_lst]))
+
+        return data
+
+    @staticmethod
+    def create_prs() -> Presentation():
+        prs = Presentation()
+        # slide size: 16:9
+        prs.slide_width = Inches(13.33)
+        prs.slide_height = Inches(7.5)
+        return prs
 
 
 class ChartFormatSetter:
