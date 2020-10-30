@@ -11,8 +11,8 @@ import pandas as pd
 
 
 class TextCreator(DataCreator):
-    def __init__(self):
-        super(DataCreator, self).__init__()
+    def __init__(self, prs=False):
+        super(DataCreator, self).__init__(prs)
 
     def creat_text(self, uid, data, slide, obj_format, position):
         # create text box

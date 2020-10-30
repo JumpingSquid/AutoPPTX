@@ -7,8 +7,8 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 
 
 class TableCreator(DataCreator):
-    def __init__(self):
-        super(DataCreator, self).__init__()
+    def __init__(self, prs=False):
+        super(DataCreator, self).__init__(prs)
 
     def create_table(self, data, slide, obj_format, position, uid):
         x, y, w, h = position

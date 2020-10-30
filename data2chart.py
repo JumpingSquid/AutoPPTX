@@ -23,8 +23,8 @@ import pandas
 
 class ChartCreator(DataCreator):
 
-    def __init__(self, prs=True):
-        super(DataCreator, self).__init__()
+    def __init__(self, prs=False):
+        super(DataCreator, self).__init__(prs)
         if prs:
             # initializing a basic presentation file when no existing file is given
             self.prs = self.create_prs()
@@ -118,13 +118,6 @@ class ChartCreator(DataCreator):
 
         return data
 
-    @staticmethod
-    def create_prs() -> Presentation():
-        prs = Presentation()
-        # slide size: 16:9
-        prs.slide_width = Inches(13.33)
-        prs.slide_height = Inches(7.5)
-        return prs
 
 
 class ChartFormatSetter:
