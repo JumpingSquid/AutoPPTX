@@ -31,6 +31,7 @@ class TextCreator(DataCreator):
         text_format = self.default_text_format(obj_format)
         textbox_format = self.default_textbox_format(obj_format)
         self.text_format_setter(p, text_format, shape, textbox_format)
+        self.uid_pool.append(uid)
         return slide
 
     def text_format_setter(self, paragraph, text_format, shape, textbox_format):

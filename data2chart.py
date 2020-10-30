@@ -120,6 +120,10 @@ class ChartCreator(DataCreator):
             chart_format_setter.line_chart_format(graphic_frame.chart)
         else:
             chart_format_setter.general_chart_format(graphic_frame.chart)
+
+        # store the uid if chart is created successfully
+        self.uid_pool.append(uid)
+
         return slide
 
 

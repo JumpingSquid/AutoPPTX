@@ -20,7 +20,6 @@ from data2table import TableCreator
 from data2text import TextCreator
 
 
-
 class PrsLayoutManager:
 
     def __init__(self,
