@@ -19,8 +19,7 @@ uid1 = constructor.add_object(data=df1, object_type='chart', position=chart_loc_
                               object_format={"chart_type": "bar", 'colormap': params.color_map('sunshine')})
 
 chart_loc_2 = ("rr", uid1, Cm(0), Cm(0), Cm(10), Cm(10))
-uid2 = constructor.add_object(data=df2, object_type='chart', position=chart_loc_2, slide_page=1,
-                              object_format={"chart_type": "line", "font_size": Pt(20)})
+uid2 = constructor.add_object(data=df2, object_type='table', position=chart_loc_2, slide_page=1)
 
 text_loc_1 = ("rd", uid2, Cm(0), Cm(0), Cm(4), Cm(1))
 constructor.add_object(data='new chart', object_type='text', position=text_loc_1, slide_page=1,)
