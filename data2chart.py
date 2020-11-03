@@ -120,7 +120,6 @@ class ChartWorker(ObjectWorker):
         return data
 
 
-
 class ChartFormatSetter:
     def __init__(self, chart_format=None):
         self.chart_format = self.chart_format_inference(chart_format)
@@ -266,9 +265,9 @@ class ChartFormatSetter:
                         "label_bool": True,
                         "chart_bool": True,
                         "colormap": None,
-                        "legend_font_size": Pt(9),
-                        "label_font_size": Pt(9),
-                        "chart_font_size": Pt(9),
+                        "legend_font_size": Pt(12),
+                        "label_font_size": Pt(12),
+                        "chart_font_size": Pt(12),
                         "label_number_format": "0.0"}
 
         if predefined_chart_format is not None:

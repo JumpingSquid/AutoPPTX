@@ -24,7 +24,7 @@ text_loc_1 = ("rd", uid2, Inches(0), Inches(0), Inches(2), Inches(1))
 constructor.add_object(data='new chart', object_type='text', position=text_loc_1, slide_page=1,)
 
 chart_loc_3 = ("rb", 0, 0, 1, 1)
-constructor.add_object(data=df3, object_type='chart', slide_page=10,
+constructor.add_object(data=df3, object_type='chart', slide_page=2,
                        position=chart_loc_3)
 
 constructor.pptx_execute()
