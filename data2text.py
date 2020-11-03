@@ -5,7 +5,7 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches, Pt
 
 from base import ObjectWorker
-from utils.pptx_params import textbox
+from utils.pptx_params import PrsParamsManager
 
 import pandas as pd
 
@@ -18,10 +18,7 @@ class TextWorker(ObjectWorker):
             self.prs = self.create_prs()
 
         self.uid_pool = []
-        self.alignment = {"left": PP_PARAGRAPH_ALIGNMENT.LEFT,
-                          "right": PP_PARAGRAPH_ALIGNMENT.RIGHT,
-                          "center": PP_PARAGRAPH_ALIGNMENT.CENTER}
-        self.text_lang = {"tc": MSO_LANGUAGE_ID.TRADITIONAL_CHINESE}
+        self.params = PrsParamsManager()
 
     def creat_text(self, uid, data, slide, obj_format, position):
         # create text box
@@ -47,10 +44,10 @@ class TextWorker(ObjectWorker):
         # TODO: Replace multiple ifs with mapping table
         # here is for text format
         if 'alignment' in text_format:
-            paragraph.alignment = self.alignment[text_format["alignment"]]
+            paragraph.alignment = self.params.alignment[text_format["alignment"]]
 
         if "font" in text_format:
-            paragraph.font.name = textbox(text_format['font'])
+            paragraph.font.name = self.params.textbox(text_format['font'])
 
         if 'font_size' in text_format:
             paragraph.font.size = Pt(text_format['font_size'])
@@ -59,7 +56,7 @@ class TextWorker(ObjectWorker):
             paragraph.font.color.rgb = text_format['font_color']
 
         if 'language' in text_format:
-            paragraph.font.language_id = self.text_lang[text_format['language']]
+            paragraph.font.language_id = self.params.text_lang[text_format['language']]
 
         # below is for text box format
         if 'color' in textbox_format:
@@ -68,12 +65,8 @@ class TextWorker(ObjectWorker):
 
         return paragraph
 
-    @ staticmethod
-    def default_text_format(text_format):
-        default_format = {"alignment": "left",
-                          "font": "title_font",
-                          "font_size": 12,
-                          'font_color': RGBColor(0, 0, 0)}
+    def default_text_format(self, text_format):
+        default_format = self.params.get_text_format()
 
         if text_format is None:
             return default_format
@@ -83,10 +76,9 @@ class TextWorker(ObjectWorker):
 
         return default_format
 
-    @staticmethod
-    def default_textbox_format(text_format):
+    def default_textbox_format(self, text_format):
         # this is for the format of textbox (e.g. color,...)
-        default_format = {'color': "no_fill"}
+        default_format = self.params.get_textbox_format()
 
         if text_format is None:
             return default_format

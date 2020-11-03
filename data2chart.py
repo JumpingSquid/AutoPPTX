@@ -14,9 +14,10 @@ from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.chart import XL_LEGEND_POSITION, XL_DATA_LABEL_POSITION
-from pptx.util import Pt
+from pptx.util import Pt, Inches
 from pptx import Presentation
-from pptx.util import Inches
+
+from utils.pptx_params import PrsParamsManager
 from base import ObjectWorker
 import pandas
 
@@ -37,6 +38,7 @@ class ChartWorker(ObjectWorker):
         self.origin = (Inches(0), Inches(0))
         self.size = (Inches(13), Inches(6))
         self.uid_pool = []
+
 
     def add_chart(self, data, slide_id, chart_type, position=None):
 
@@ -122,6 +124,7 @@ class ChartWorker(ObjectWorker):
 
 class ChartFormatSetter:
     def __init__(self, chart_format=None):
+        self.params = PrsParamsManager()
         self.chart_format = self.chart_format_inference(chart_format)
 
     def general_chart_format(self, chart):
@@ -259,16 +262,7 @@ class ChartFormatSetter:
                 colormap_index += 1
 
     def chart_format_inference(self, predefined_chart_format=None):
-        chart_format = {"chart_title": "",
-                        "chart_type": "bar",
-                        "legend_bool": True,
-                        "label_bool": True,
-                        "chart_bool": True,
-                        "colormap": None,
-                        "legend_font_size": Pt(12),
-                        "label_font_size": Pt(12),
-                        "chart_font_size": Pt(12),
-                        "label_number_format": "0.0"}
+        chart_format = self.params.get_chart_format()
 
         if predefined_chart_format is not None:
             for chart_format_key in predefined_chart_format:

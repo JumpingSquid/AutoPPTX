@@ -4,6 +4,7 @@ from base import ObjectWorker
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.enum.lang import MSO_LANGUAGE_ID
+from utils.pptx_params import PrsParamsManager
 
 
 class TableWorker(ObjectWorker):
@@ -15,10 +16,7 @@ class TableWorker(ObjectWorker):
             self.prs = self.create_prs()
 
         self.uid_pool = []
-        self.alignment = {"left": PP_PARAGRAPH_ALIGNMENT.LEFT,
-                          "right": PP_PARAGRAPH_ALIGNMENT.RIGHT,
-                          "center": PP_PARAGRAPH_ALIGNMENT.CENTER}
-        self.text_lang = {"tc": MSO_LANGUAGE_ID.TRADITIONAL_CHINESE}
+        self.params = PrsParamsManager()
 
     def create_table(self, data, slide, obj_format, position, uid):
         x, y, w, h = position
@@ -41,15 +39,14 @@ class TableWorker(ObjectWorker):
             for cell in row.cells:
                 for paragraph in cell.text_frame.paragraphs:
                     if "alignment" in table_format:
-                        paragraph.alignment = self.alignment[table_format['alignment']]
+                        paragraph.alignment = self.params.alignment[table_format['alignment']]
                     for run in paragraph.runs:
                         if 'font_size' in table_format:
                             run.font.size = Pt(table_format['font_size'])
         return table
 
-    @staticmethod
-    def default_object_format(table_format):
-        default_table_format = {'font_size': 24, 'alignment': 'left'}
+    def default_object_format(self, table_format):
+        default_table_format = self.params.get_table_format()
 
         if table_format is None:
             return default_table_format
