@@ -34,11 +34,10 @@ class ChartWorker(ObjectWorker):
             bullet_slide_layout = self.prs.slide_layouts[6]
             self.slide_pool[0] = self.prs.slides.add_slide(bullet_slide_layout)
 
-        # default origin and size for the chart
-        self.origin = (Inches(0), Inches(0))
-        self.size = (Inches(13), Inches(6))
+            # default origin and size for the chart
+            self.origin = (Inches(0), Inches(0))
+            self.size = (Inches(13), Inches(6))
         self.uid_pool = []
-
 
     def add_chart(self, data, slide_id, chart_type, position=None):
 

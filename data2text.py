@@ -1,7 +1,3 @@
-from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
-from pptx.enum.lang import MSO_LANGUAGE_ID
-from pptx.enum.shapes import MSO_SHAPE
 from pptx.util import Inches, Pt
 
 from base import ObjectWorker

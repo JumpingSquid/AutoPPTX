@@ -2,8 +2,6 @@ import pandas as pd
 
 from base import ObjectWorker
 from pptx.util import Inches, Pt
-from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
-from pptx.enum.lang import MSO_LANGUAGE_ID
 from utils.pptx_params import PrsParamsManager
 
 
