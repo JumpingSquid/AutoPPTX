@@ -14,17 +14,6 @@ standard structure and layout (typically a weekly or daily report with fixed lay
 ## II. Example 
 ### 1. Creating charts on pptx with Pandas
     
-#### Data2Chart
-    pptx = ChartCreator()
-    pptx.add_slide("main_page") 
-    pptx.add_slide("slide_2")  
-    pptx.add_slide("slide_3")  
-    # df is a pandas dataFrame
-    pptx.add_chart(data=df, slide_id="main_page", chart_type='line')  
-    pptx.add_chart(data=df, slide_id="slide_2", chart_type='bar')  
-    pptx.add_chart(data=df, slide_id="slide_3", chart_type='pie')
-    pptx.save("new.pptx")
-    
 #### PPTX_Constructor
     constructor = PptxConstructor({'prs_width': Inches(13), "prs_height": Inches(7)})
     # absolute position
@@ -41,6 +30,17 @@ standard structure and layout (typically a weekly or daily report with fixed lay
     constructor.add_object(data=df3, object_type='chart', slide_page=10, position=loc_3)
     constructor.pptx_execute()
     constructor.pptx_save()
+    
+#### Data2Chart
+    pptx = ChartCreator()
+    pptx.add_slide("main_page") 
+    pptx.add_slide("slide_2")  
+    pptx.add_slide("slide_3")  
+    # df is a pandas dataFrame
+    pptx.add_chart(data=df, slide_id="main_page", chart_type='line')  
+    pptx.add_chart(data=df, slide_id="slide_2", chart_type='bar')  
+    pptx.add_chart(data=df, slide_id="slide_3", chart_type='pie')
+    pptx.save("new.pptx")
 
  ___
 Modified under The MIT License (MIT) Copyright (c) 2013 Steve Canny(https://github.com/scanny)
