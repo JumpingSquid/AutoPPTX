@@ -7,11 +7,10 @@ redundant loading of all parameters.
 """
 
 
-from pptx.util import Pt
-from pptx.util import Inches
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
 from pptx.enum.lang import MSO_LANGUAGE_ID
+from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
+from pptx.util import Pt
 
 
 class PrsParamsManager:

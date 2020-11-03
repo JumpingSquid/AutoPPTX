@@ -1,9 +1,7 @@
-from pptx.util import Inches, Pt
+from pptx.util import Pt
 
 from base import ObjectWorker
 from utils.pptx_params import PrsParamsManager
-
-import pandas as pd
 
 
 class TextWorker(ObjectWorker):

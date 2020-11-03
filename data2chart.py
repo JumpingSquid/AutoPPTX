@@ -10,16 +10,15 @@ For simplicity, Data2chart should not allow for complicated layout manipulation.
 To create slide with multiple charts and auto layout management, one should use pptx_construct instead.
 """
 
+import pandas
 from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
 from pptx.enum.chart import XL_CHART_TYPE
 from pptx.enum.chart import XL_LEGEND_POSITION, XL_DATA_LABEL_POSITION
 from pptx.util import Pt, Inches
-from pptx import Presentation
 
-from utils.pptx_params import PrsParamsManager
 from base import ObjectWorker
-import pandas
+from utils.pptx_params import PrsParamsManager
 
 
 class ChartWorker(ObjectWorker):

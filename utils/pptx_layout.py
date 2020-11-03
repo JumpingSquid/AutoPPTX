@@ -8,13 +8,6 @@ Every objects on the slide, will be given an unique id. Designer will arrange th
 provide a json format file to the manger, specifying the location of each uid
 """
 
-
-from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_PARAGRAPH_ALIGNMENT
-from pptx.enum.lang import MSO_LANGUAGE_ID
-from pptx.enum.shapes import MSO_SHAPE_TYPE
-from pptx.util import Inches, Pt
-
 from data2chart import ChartWorker
 from data2table import TableWorker
 from data2text import TextWorker
