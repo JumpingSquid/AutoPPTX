@@ -8,7 +8,17 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 
 class TableWorker(ObjectWorker):
     def __init__(self, prs=False):
-        super(ObjectWorker, self).__init__(prs)
+        super(ObjectWorker, self).__init__()
+
+        if prs:
+            # initializing a basic presentation file when no existing file is given
+            self.prs = self.create_prs()
+
+        self.uid_pool = []
+        self.alignment = {"left": PP_PARAGRAPH_ALIGNMENT.LEFT,
+                          "right": PP_PARAGRAPH_ALIGNMENT.RIGHT,
+                          "center": PP_PARAGRAPH_ALIGNMENT.CENTER}
+        self.text_lang = {"tc": MSO_LANGUAGE_ID.TRADITIONAL_CHINESE}
 
     def create_table(self, data, slide, obj_format, position, uid):
         x, y, w, h = position

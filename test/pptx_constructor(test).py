@@ -28,4 +28,4 @@ constructor.add_object(data=df3, object_type='chart', slide_page=10,
                        position=chart_loc_3)
 
 constructor.pptx_execute()
-constructor.pptx_save()
+constructor.pptx_save("../test_storage/test.pptx")

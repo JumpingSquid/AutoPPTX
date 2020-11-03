@@ -24,18 +24,19 @@ import pandas
 class ChartWorker(ObjectWorker):
 
     def __init__(self, prs=False):
-        super(ObjectWorker, self).__init__(prs)
+        super(ObjectWorker, self).__init__()
         if prs:
             # initializing a basic presentation file when no existing file is given
             self.prs = self.create_prs()
 
-        self.slide_pool = {}
-        bullet_slide_layout = self.prs.slide_layouts[6]
-        self.slide_pool[0] = self.prs.slides.add_slide(bullet_slide_layout)
+            self.slide_pool = {}
+            bullet_slide_layout = self.prs.slide_layouts[6]
+            self.slide_pool[0] = self.prs.slides.add_slide(bullet_slide_layout)
 
         # default origin and size for the chart
         self.origin = (Inches(0), Inches(0))
         self.size = (Inches(13), Inches(6))
+        self.uid_pool = []
 
     def add_chart(self, data, slide_id, chart_type, position=None):
 
