@@ -1,5 +1,5 @@
+import pandas as pd
 from pptx.util import Pt
-
 from base import ObjectWorker
 from utils.pptx_params import PrsParamsManager
 
@@ -15,10 +15,10 @@ class TableWorker(ObjectWorker):
         self.uid_pool = []
         self.params = PrsParamsManager()
 
-    def create_table(self, data, slide, obj_format, position, uid):
+    def create_table(self, data: pd.DataFrame, slide, obj_format, position, uid):
         x, y, w, h = position
-        row_num = data['row_num']
-        col_num = data['col_num']
+        row_num = len(data)
+        col_num = len(data.columns)
         table = slide.shapes.add_table(row_num, col_num, x, y, w, h).table
         for row in range(row_num):
             for col in range(col_num):
@@ -26,10 +26,9 @@ class TableWorker(ObjectWorker):
                 cell.text = data.iloc[row, col]
 
         table = self.table_format_setter(table, obj_format)
-
         self.uid_pool.append(uid)
 
-        return table
+        return slide
 
     def table_format_setter(self, table, table_format):
         for row in table.rows:

@@ -16,16 +16,16 @@ constructor = pptx_construct.PptxConstructor({'prs_width': Inches(13),
 
 chart_loc_1 = ("a", Cm(0), Cm(0), Cm(10), Cm(10))
 uid1 = constructor.add_object(data=df1, object_type='chart', position=chart_loc_1,
-                              object_format={"chart_type": "bar", 'colormap': params.color_map('sunshine')})
+                              object_format={"chart_type": "bar", 'colormap': params.color_map(3)})
 
 chart_loc_2 = ("rr", uid1, Cm(0), Cm(0), Cm(10), Cm(10))
 uid2 = constructor.add_object(data=df2, object_type='chart', position=chart_loc_2, slide_page=1,
-                              object_format={"chart_type": "line", "font_size": Pt(20)})
+                              object_format={"chart_type": "line", "font_size": Pt(16)})
 
 text_loc_1 = ("rd", uid2, Cm(0), Cm(0), Cm(4), Cm(1))
 constructor.add_object(data='new chart', object_type='text', position=text_loc_1, slide_page=1,)
 
-chart_loc_3 = ("rb", 0, 0, 0.3, 0.3)
+chart_loc_3 = ("rb", 0, 0, 0.4, 0.4)
 constructor.add_object(data=df3, object_type='chart', slide_page=2,
                        position=chart_loc_3)
 
