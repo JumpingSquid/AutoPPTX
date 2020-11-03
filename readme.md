@@ -17,18 +17,9 @@ to manipulate the entire presentation file. The API provides several ways to pro
     
 #### PPTX_Constructor
     constructor = PptxConstructor({'prs_width': Inches(13), "prs_height": Inches(7)})
-    # absolute position
-    loc_1 = ("a", Cm(0), Cm(0), Cm(6), Cm(6)) 
-    uid1 = constructor.add_object(data=df1, object_type='chart', position=loc_1, object_format={"chart_type": "bar"})
-    
-    # relative position to boundary
-    loc_2 = ("rb", 0.2, 0.2, 0.5, 0.5)
-    constructor.add_object(data=df2, object_type='chart', position=loc_2, slide_page=1, 
-    object_format={"chart_type": "line", "font_size": Pt(20)})
-    
-    # relative position to other object(given uid)
-    loc_3 = ("ro", uid1, Cm(0), Cm(0), Cm(6), Cm(6))
-    constructor.add_object(data=df3, object_type='chart', slide_page=10, position=loc_3)
+    constructor.add_object(data=df1, object_type='chart', object_format={"chart_type": "line"})
+    constructor.add_object(data=df2, object_type='chart', slide_page=1)
+    constructor.add_object(data=df3, object_type='chart', position=('a', 0, 0, Cm(13), Cm(13)))
     constructor.pptx_execute()
     constructor.pptx_save()
     
