@@ -7,13 +7,14 @@ on the slide directly. This workaround should be harmless as the auditor only cr
 """
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
-from utils.pptx_params import textbox
+from utils.pptx_params import PrsParamsManager
 
 
 class PrsAuditor:
     def __init__(self):
         self.data = None
         self.log = {}
+        self.params = PrsParamsManager()
 
     def audit_data_container(self, data_container):
         audit = {}
@@ -25,8 +26,7 @@ class PrsAuditor:
         self.log['design_structure'] = audit
         return audit
 
-    @staticmethod
-    def _sample_size_warning(slide, left=Inches(8.33), top=Inches(1)):
+    def _sample_size_warning(self, slide, left=Inches(8.33), top=Inches(1)):
         # activate when the auditor find chart with sample size less than pre-defined threshold
 
         # the position of the comment
@@ -44,8 +44,8 @@ class PrsAuditor:
         tf.clear()  # not necessary for newly-created shape
         p = tf.paragraphs[0]
         run = p.add_run()
-        run.text = textbox("sample_warn_text")
+        run.text = self.params.textbox("sample_warn_text")
         font = run.font
-        font.name = textbox("sample_warn_font")
+        font.name = self.params.textbox("sample_warn_font")
         font.size = Pt(16)
         return slide
