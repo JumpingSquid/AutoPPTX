@@ -17,14 +17,6 @@ from pptx.enum.lang import MSO_LANGUAGE_ID
 class PrsParamsManager:
 
     def __init__(self):
-        self.data = None
-        self._default_chart_format = dict(chart_title="", chart_type="bar", legend_bool=True, label_bool=True,
-                                          chart_bool=True, colormap=None, legend_font_size=Pt(12),
-                                          label_font_size=Pt(12), chart_font_size=Pt(12), label_number_format="0.0")
-        self._default_text_format = dict(alignment="left", font="title_font", font_size=12,
-                                         font_color=RGBColor(0, 0, 0))
-        self._default_textbox_format = dict(color="no_fill")
-        self._default_table_format = dict(font_size=24, alignment='left')
         self.alignment = dict(left=PP_PARAGRAPH_ALIGNMENT.LEFT, right=PP_PARAGRAPH_ALIGNMENT.RIGHT,
                               center=PP_PARAGRAPH_ALIGNMENT.CENTER)
         self.text_lang = dict(tc=MSO_LANGUAGE_ID.TRADITIONAL_CHINESE)
@@ -36,6 +28,14 @@ class PrsParamsManager:
             sea_reverse=[[3, 193, 161], [3, 193, 226], [112, 193, 226], [103, 149, 222], [180, 214, 219]],
             coldwarm=[[245, 227, 234], [212, 161, 167], [235, 214, 120], [112, 193, 226], [103, 149, 222],
                       [180, 214, 219]])
+
+        self._default_chart_format = dict(chart_title="", chart_type="bar", legend_bool=True, label_bool=True,
+                                          chart_bool=True, colormap=None, legend_font_size=Pt(12),
+                                          label_font_size=Pt(12), chart_font_size=Pt(12), label_number_format="0.0")
+        self._default_text_format = dict(alignment="left", font="title_font", font_size=12,
+                                         font_color=RGBColor(0, 0, 0))
+        self._default_textbox_format = dict(color="no_fill")
+        self._default_table_format = dict(font_size=24, alignment='left')
 
     def get_chart_format(self):
         return self._default_chart_format
