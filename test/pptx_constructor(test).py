@@ -1,7 +1,7 @@
-import pptx_construct
 
 import pandas as pd
 
+import pptx_construct
 from pptx.util import Inches, Pt, Cm
 from utils.pptx_params import PrsParamsManager
 
@@ -10,7 +10,6 @@ df2 = pd.DataFrame([[4, 5, 6] for _ in range(3)], columns=['d', 'e', 'f'])
 df3 = pd.DataFrame([[7, 8, 9] for _ in range(3)], columns=['g', 'h', 'i'])
 
 params = PrsParamsManager()
-
 constructor = pptx_construct.PptxConstructor({'prs_width': Inches(13),
                                               "prs_height": Inches(7)})
 
@@ -18,7 +17,7 @@ chart_loc_1 = ("a", Cm(0), Cm(0), Cm(10), Cm(10))
 uid1 = constructor.add_object(data=df1, object_type='chart', position=chart_loc_1,
                               object_format={"chart_type": "bar", 'colormap': params.color_map('sunshine')})
 
-chart_loc_2 = ("rr", uid1, Cm(0), Cm(0), Cm(10), Cm(10))
+chart_loc_2 = ("rr", uid1, Cm(0), Cm(0), Cm(5), Cm(10))
 uid2 = constructor.add_object(data=df2, object_type='table', position=chart_loc_2, slide_page=1)
 
 text_loc_1 = ("rd", uid2, Cm(0), Cm(0), Cm(4), Cm(1))

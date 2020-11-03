@@ -19,16 +19,28 @@ class TableWorker(ObjectWorker):
 
     def create_table(self, data: pd.DataFrame, slide, obj_format, position, uid):
         x, y, w, h = position
-        row_num = len(data)
-        col_num = len(data.columns)
+        row_num = len(data) + 1
+        col_num = len(data.columns) + 1
+
+        col_lst = data.columns.to_list()
+        index_lst = data.index.to_list()
         table = slide.shapes.add_table(row_num, col_num, x, y, w, h).table
-        for row in range(row_num):
-            for col in range(col_num):
+
+        for col in range(1, col_num):
+            cell = table.cell(0, col)
+            cell.text = str(col_lst[col-1])
+
+        for row in range(1, row_num):
+            cell = table.cell(row, 0)
+            cell.text = str(index_lst[row-1])
+
+        for row in range(1, row_num):
+            for col in range(1, col_num):
                 cell = table.cell(row, col)
-                cell.text = str(data.iloc[row, col])
+                cell.text = str(data.iloc[row-1, col-1])
 
         obj_format = self.default_object_format(obj_format)
-        table = self.table_format_setter(table, obj_format)
+        self.table_format_setter(table, obj_format)
 
         self.uid_pool.append(uid)
 
