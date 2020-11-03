@@ -1,7 +1,9 @@
 """
 PrsParamsManager is used to store and manage all parameters. Although this design requires multiple initialization,
 it will allow the user to access all parameters in one place.
-In the future, a more sophisticated implementation is needed if more parameter is added.
+
+In the future, a more sophisticated implementation is needed if more parameter is added. In particular, it should avoid
+redundant loading of all parameters.
 """
 
 
