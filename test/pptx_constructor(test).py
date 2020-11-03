@@ -2,7 +2,7 @@ import pptx_construct
 
 import pandas as pd
 
-from pptx.util import Inches, Pt
+from pptx.util import Inches, Pt, Cm
 from utils.pptx_params import PrsParamsManager
 
 df1 = pd.DataFrame([[1, 2, 3] for _ in range(3)], columns=['a', 'b', 'c'])
@@ -14,15 +14,15 @@ params = PrsParamsManager()
 constructor = pptx_construct.PptxConstructor({'prs_width': Inches(13),
                                               "prs_height": Inches(7)})
 
-chart_loc_1 = ("a", Inches(0), Inches(0), Inches(3), Inches(3))
+chart_loc_1 = ("a", Cm(0), Cm(0), Cm(10), Cm(10))
 uid1 = constructor.add_object(data=df1, object_type='chart', position=chart_loc_1,
                               object_format={"chart_type": "bar", 'colormap': params.color_map('sunshine')})
 
-chart_loc_2 = ("rr", uid1, Inches(0), Inches(0), Inches(3), Inches(3))
+chart_loc_2 = ("rr", uid1, Cm(0), Cm(0), Cm(10), Cm(10))
 uid2 = constructor.add_object(data=df2, object_type='chart', position=chart_loc_2, slide_page=1,
                               object_format={"chart_type": "line", "font_size": Pt(20)})
 
-text_loc_1 = ("rd", uid2, Inches(0), Inches(0), Inches(2), Inches(1))
+text_loc_1 = ("rd", uid2, Cm(0), Cm(0), Cm(4), Cm(1))
 constructor.add_object(data='new chart', object_type='text', position=text_loc_1, slide_page=1,)
 
 chart_loc_3 = ("rb", 0, 0, 0.3, 0.3)
