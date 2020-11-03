@@ -1,3 +1,10 @@
+"""
+PrsParamsManager is used to store and manage all parameters. Although this design requires multiple initialization,
+it will allow the user to access all parameters in one place.
+In the future, a more sophisticated implementation is needed if more parameter is added.
+"""
+
+
 from pptx.util import Pt
 from pptx.util import Inches
 from pptx.dml.color import RGBColor
@@ -19,6 +26,14 @@ class PrsParamsManager:
         self.alignment = dict(left=PP_PARAGRAPH_ALIGNMENT.LEFT, right=PP_PARAGRAPH_ALIGNMENT.RIGHT,
                               center=PP_PARAGRAPH_ALIGNMENT.CENTER)
         self.text_lang = dict(tc=MSO_LANGUAGE_ID.TRADITIONAL_CHINESE)
+        self.color_map_dict = dict(
+            sunshine=[[212, 161, 167], [235, 214, 120], [254, 221, 98], [235, 171, 120], [235, 131, 95],
+                      [245, 63, 43]],
+            forest=[[87, 151, 115], [145, 96, 38], [166, 164, 167], [229, 233, 239], [89, 56, 0]],
+            sea=[[23, 55, 94], [103, 149, 222], [112, 193, 226], [3, 193, 226], [3, 193, 161]],
+            sea_reverse=[[3, 193, 161], [3, 193, 226], [112, 193, 226], [103, 149, 222], [180, 214, 219]],
+            coldwarm=[[245, 227, 234], [212, 161, 167], [235, 214, 120], [112, 193, 226], [103, 149, 222],
+                      [180, 214, 219]])
 
     def get_chart_format(self):
         return self._default_chart_format
@@ -68,18 +83,14 @@ class PrsParamsManager:
                     self._default_table_format[fkey] = format_dict[fkey]
         return 1
 
-    @staticmethod
-    def color_map(index):
-        color_map_dict = {
-            "sunshine": [[212, 161, 167], [235, 214, 120], [254, 221, 98], [235, 171, 120], [235, 131, 95],
-                         [245, 63, 43]],
-            "forest": [[87, 151, 115], [145, 96, 38], [166, 164, 167], [229, 233, 239], [89, 56, 0]],
-            "sea": [[23, 55, 94], [103, 149, 222], [112, 193, 226], [3, 193, 226], [3, 193, 161]],
-            "sea_reverse": [[3, 193, 161], [3, 193, 226], [112, 193, 226], [103, 149, 222], [180, 214, 219]],
-            "coldwarm": [[245, 227, 234], [212, 161, 167], [235, 214, 120], [112, 193, 226], [103, 149, 222],
-                         [180, 214, 219]]
-        }
-        return color_map_dict[index]
+    def color_map(self, index):
+        if index in self.color_map_dict:
+            return self.color_map_dict[index]
+        elif 0 <= index < len(self.color_map_dict):
+            key_lst = [k for k in self.color_map_dict.keys()]
+            return self.color_map_dict[key_lst[index]]
+        else:
+            raise ValueError("index should be the color map name or the index")
 
     @staticmethod
     def color(r, g, b):
@@ -87,13 +98,7 @@ class PrsParamsManager:
 
     @staticmethod
     def textbox(key):
-        text_dict = {
-            "title_font": "微軟正黑體",
-            "comment_font": "微軟正黑體",
-            "chart_appendix_font": "微軟正黑體",
-            "sample_warn_font": "微軟正黑體",
-            "sample_size_font": "微軟正黑體",
-            "sample_warn_text": "Sample size < 15",
-            "sample_size_text": "總樣本數:"
-        }
+        text_dict = dict(title_font="微軟正黑體", comment_font="微軟正黑體", chart_appendix_font="微軟正黑體",
+                         sample_warn_font="微軟正黑體", sample_size_font="微軟正黑體", sample_warn_text="Sample size < 15",
+                         sample_size_text="總樣本數:")
         return text_dict[key]
